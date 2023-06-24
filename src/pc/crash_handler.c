@@ -1,6 +1,8 @@
 // Adapted from PeachyPeach's sm64pc-omm (now sm64ex-omm)
 #include "crash_handler.h"
 
+char gLastRemoteBhv[256] = "";
+
 #if (defined(_WIN32) || defined(__linux__)) && !defined(WAPI_DUMMY)
 
 #ifdef HAVE_SDL2
@@ -24,13 +26,14 @@
 #include "pc/network/network.h"
 #include "pc/gfx/gfx_rendering_api.h"
 #include "pc/mods/mods.h"
+#include "pc/debuglog.h"
 
 typedef struct {
     s32 x, y;
     u8 r, g, b;
     char s[128];
 } CrashHandlerText;
-static CrashHandlerText sCrashHandlerText[128 + 256];
+static CrashHandlerText sCrashHandlerText[128 + 256 + 4];
 
 #define PTR long long unsigned int)(uintptr_t
 
@@ -298,6 +301,7 @@ static CRASH_HANDLER_TYPE crash_handler(EXCEPTION_POINTERS *ExceptionInfo) {
 #elif __linux__
 static void crash_handler(const int signalNum, siginfo_t *info, ucontext_t *context) {
 #endif
+    LOG_INFO("game crashed! preparing crash screen...");
     memset(sCrashHandlerText, 0, sizeof(sCrashHandlerText));
     CrashHandlerText *pText = &sCrashHandlerText[0];
     gDjuiDisabled = true;
@@ -634,6 +638,7 @@ static void crash_handler(const int signalNum, siginfo_t *info, ucontext_t *cont
     }
 
     crash_handler_add_info_str(&pText, 335, 208, "Version", get_version_local());
+    crash_handler_add_info_str(&pText, 8, 208, "RemoteBhv", gLastRemoteBhv);
 
     // sounds
 #ifdef HAVE_SDL2
@@ -688,17 +693,17 @@ struct PcDebug gPcDebug = {
     .tags = {
         0x0000000000000000,
         0x000000000000FFFF,
-        0x440C28A5CC404F11,
-        0x2783114DDB90E597,
-        0x0EF4AF18EEC1303A,
-        0x5E6A9446709E7CFF,
-        0x914FA1C52D410003,
-        0xE9A402C28144FD8B,
-        0x83B8B87B1E6A0B78,
-        0xEE7B0ED661ABA0ED,
+        0x2D1D50FB02617949,
+        0x8AEB7180FAE739EB,
+        0x0CDB1A233CC71057,
+        0x53D5D9880C8B278E,
+        0xE8E307BE5802542E,
+        0x8A3ACC4FDB4FFE45,
+        0x09046C2BA3C5000D,
+        0xF027964ADE989C29,
         0x076CF19655C70007,
-        0x9325E55A037D6511,
-        0x77ACD7B422D978A6,
+        0x440C28A5CC404F11,
+        0xE9A402C28144FD8B,
         0x9A2269E87B26BE68,
     },
     .id = DEFAULT_ID,

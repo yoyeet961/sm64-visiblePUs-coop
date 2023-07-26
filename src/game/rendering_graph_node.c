@@ -16,6 +16,7 @@
 #include "pc/debuglog.h"
 #include "game/skybox.h"
 #include "include/course_table.h"
+#include "game/object_list_processor.h"
 
 /**
  * This file contains the code that processes the scene graph for rendering.
@@ -538,11 +539,26 @@ static void geo_process_switch(struct GraphNodeSwitchCase *node) {
     }
 }
 
+// void disableAllObjects() {
+//     struct Object* obj;
+//     for (obj = gObjectLists[OBJ_LIST_DEFAULT].next; obj != NULL; obj = obj->next) {
+//         obj->activeFlags = ACTIVE_FLAG_DEACTIVATED;
+//     }
+// }
+// void enableAllObjects() {
+//     struct Object* obj;
+//     for (obj = gObjectLists[OBJ_LIST_DEFAULT].next; obj != NULL; obj = obj->next) {
+//         obj->activeFlags = ACTIVE_FLAG_ACTIVE;
+//     }
+// }
+
 /**
  * Process a camera node.
  */
 static void geo_process_camera(struct GraphNodeCamera *node) {
     Mat4 cameraTransform;
+    Mat4 cameraTransformModified;
+    // Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB.
     if ((gMatStackIndex + 1) >= MATRIX_STACK_SIZE) { LOG_ERROR("Preventing attempt to exceed the maximum size %i for our matrix stack with size of %i.", MATRIX_STACK_SIZE - 1, gMatStackIndex); return; }
@@ -560,8 +576,111 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
 
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(rollMtx), G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 
-    mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
-    mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+    // node->pos[0] = fmodf(node->pos[0], 65536.0f);
+    // node->pos[1] = fmodf(node->pos[1], 65536.0f);
+    // node->pos[2] = fmodf(node->pos[2], 65536.0f);
+    // node->focus[0] = fmodf(node->focus[0], 65536.0f);
+    // node->focus[1] = fmodf(node->focus[1], 65536.0f);
+    // node->focus[2] = fmodf(node->focus[2], 65536.0f);
+    // reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+    // reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+    // reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+    // reducedFocus[0] = fmodf(node->focus[0], 65536.0f);
+    // reducedFocus[1] = fmodf(node->focus[1], 65536.0f);
+    // reducedFocus[2] = fmodf(node->focus[2], 65536.0f);
+
+    // struct MarioState *m = &gMarioStates[0];
+
+    // int puX, puZ;
+
+    // if (m->pos[1] >= 0) {
+    //     puX = floor((8192 + m->pos[1]) / 65536);
+    // } else {
+    //     puX = ceil((-8192 + m->pos[1]) / 65536);
+    // }
+
+    // if (m->pos[3] >= 0) {
+    //     puZ = floor((8192 + m->pos[3]) / 65536);
+    // } else {
+    //     puZ = ceil((-8192 + m->pos[3]) / 65536);
+    // }
+    // int height;
+    // height = djui_hud_get_screen_height();
+    // int width;
+    // width = djui_hud_get_screen_width();
+    // char buffer[20];
+    // const char * str1 = "PU X Pos ";
+    // const char * str2 = sprintf(buffer, "%d", puX);
+    // char result[strlen(str1) + strlen(str2) + 1]; // +1 for the null-terminator
+    // strcpy(result, str1);
+    // strcat(result, str2);
+    // const char * str3 = "PU 2 Pos ";
+    // const char * str4 = sprintf(buffer, "%d", puZ);
+    // char result2[strlen(str1) + strlen(str2) + 1]; // +1 for the null-terminator
+    // strcpy(result2, str3);
+    // strcat(result2, str4);
+    // // djui_hud_print_text(result, width / 100, height / 1.25, 1);
+    // // djui_hud_print_text(result2, width / 100, (height / 1.25) + 20, 1);
+    // djui_text_create(&gDjuiRoot->base, result);
+
+    // if (!puX == 0 | !puZ == 0) {
+    //     if (m->playerIndex == 0) {
+    //         disableAllObjects();
+    //     }
+    // }
+    // else {
+    //     enableAllObjects();
+    // }
+
+    // if (m->controller->buttonPressed & L_TRIG) {
+    //     disableAllObjects();
+    // }
+    // if (m->controller->buttonPressed & L_TRIG) {
+    //     enableAllObjects();
+    // }
+
+    // Mat4 cameraTransformModified;
+    // // mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+    // mtxf_lookat(cameraTransformModified, node->pos, node->focus, node->roll);
+    // mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+    // if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
+    //     gMatStackFixed[gMatStackIndex + 1] = (Mtx*)malloc(sizeof(Mtx));
+    // }
+    // memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mtx));
+
+mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+node->pos[0] = fmodf(node->pos[0], 65536.0f);
+node->pos[1] = fmodf(node->pos[1], 65536.0f);
+node->pos[2] = fmodf(node->pos[2], 65536.0f);
+node->focus[0] = fmodf(node->focus[0], 65536.0f);
+node->focus[1] = fmodf(node->focus[1], 65536.0f);
+node->focus[2] = fmodf(node->focus[2], 65536.0f);
+
+// Update gMatStackFixed with the modified camera transformation
+if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
+    gMatStackFixed[gMatStackIndex + 1] = (Mtx*)malloc(sizeof(Mtx));
+}
+
+// Update gMatStackFixed with the modified camera transformation
+memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mtx));
+// gMatStackFixed[gMatStackIndex + 1] = cameraTransformModified;
+//mtxf_mul(gMatStackFixed[gMatStackIndex + 1], cameraTransformModified, gMatStack[gMatStackIndex]);
+// if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
+// //     gMatStackFixed[gMatStackIndex + 1] = (Mat4*)malloc(sizeof(Mat4));
+//     gMatStackFixed[gMatStackIndex + 1] = cameraTransformModified;
+// }
+//     //mtxf_mul(gMatStackFixed[gMatStackIndex + 1], cameraTransformModified, gMatStackFixed[gMatStackIndex]);
+
+// // Update gMatStackFixed with the modified camera transformation
+// //memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mat4));
+    // mtxf_mul(gMatStackFixed, cameraTransform, gMatStack[gMatStackIndex]);
+    // mtxf_copy(gMatStackFixed, cameraTransform);
+    // mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+    // mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+    // gMatStackIndex++;
+    // // mtxf_to_mtx(mtx, gMatStack[gMatStackIndex]);
+    // // gMatStackFixed[gMatStackIndex] = mtx;
 
     if (gCamSkipInterp) {
         // apply prevpos camera offset

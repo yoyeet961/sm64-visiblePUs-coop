@@ -414,6 +414,13 @@ static void geo_append_display_list(void *displayList, s16 layer) {
 #endif
     if (gCurGraphNodeMasterList != 0) {
         struct DisplayListNode *listNode = growing_pool_alloc(gDisplayListHeap, sizeof(struct DisplayListNode));
+//         struct GraphNodeCamera *node;
+//         node->pos[0] = fmodf(node->pos[0], 65536.0f);
+// node->pos[1] = fmodf(node->pos[1], 65536.0f);
+// node->pos[2] = fmodf(node->pos[2], 65536.0f);
+// node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// node->focus[2] = fmodf(node->focus[2], 65536.0f);
 
         listNode->transform = gMatStackFixed[gMatStackIndex];
         listNode->transformPrev = gMatStackPrevFixed[gMatStackIndex];
@@ -657,13 +664,13 @@ node->focus[0] = fmodf(node->focus[0], 65536.0f);
 node->focus[1] = fmodf(node->focus[1], 65536.0f);
 node->focus[2] = fmodf(node->focus[2], 65536.0f);
 
-// Update gMatStackFixed with the modified camera transformation
-if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
-    gMatStackFixed[gMatStackIndex + 1] = (Mtx*)malloc(sizeof(Mtx));
-}
+// // Update gMatStackFixed with the modified camera transformation
+// if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
+//     gMatStackFixed[gMatStackIndex + 1] = (Mtx*)malloc(sizeof(Mtx));
+// }
 
-// Update gMatStackFixed with the modified camera transformation
-memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mtx));
+// // Update gMatStackFixed with the modified camera transformation
+// memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mtx*));
 // gMatStackFixed[gMatStackIndex + 1] = cameraTransformModified;
 //mtxf_mul(gMatStackFixed[gMatStackIndex + 1], cameraTransformModified, gMatStack[gMatStackIndex]);
 // if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
@@ -733,6 +740,7 @@ memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mtx)
 static void geo_process_translation_rotation(struct GraphNodeTranslationRotation *node) {
     Mat4 mtxf;
     Vec3f translation;
+    Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB\.
     if ((gMatStackIndex + 1) >= MATRIX_STACK_SIZE) { LOG_ERROR("Preventing attempt to exceed the maximum size %i for our matrix stack with size of %i.", MATRIX_STACK_SIZE - 1, gMatStackIndex); return; }
@@ -741,6 +749,7 @@ static void geo_process_translation_rotation(struct GraphNodeTranslationRotation
     mtxf_rotate_zxy_and_translate(mtxf, translation, node->rotation);
     mtxf_mul(gMatStack[gMatStackIndex + 1], mtxf, gMatStack[gMatStackIndex]);
     mtxf_mul(gMatStackPrev[gMatStackIndex + 1], mtxf, gMatStackPrev[gMatStackIndex]);
+    //gMatStackFixed[gMatStackIndex] = mtx;
 
     // Increment the matrix stack, If we fail to do so. Just return.
     if (!increment_mat_stack()) { return; }

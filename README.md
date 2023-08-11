@@ -8,3 +8,4 @@ Make parallel universes visible, with absolutely no glitches.
 ## Contribution
 If you want to help me remove the glitches, please make a pull request.
 It would really help a lot.
+Or you can DM me on Discord. My username is defacube.

@@ -13,6 +13,22 @@ bool gDjuiPanelMainCreated = false;
 static void djui_panel_main_quit_yes(UNUSED struct DjuiBase* caller) {
     game_exit();
 }
+static void nothing() {
+    return;
+}
+static void djui_panel_main_credits(struct DjuiBase* caller) {
+    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#00b3ff\\CREDITS\n\n\\#ffffff\\Peter Fedak\nPlayerPro342");
+    {
+    struct DjuiBase* body = djui_three_panel_get_body(panel);
+    {
+    struct DjuiButton* button1 = djui_button_create(body, DLANG(MAIN, Back), DJUI_BUTTON_STYLE_BACK, djui_panel_menu_back);
+    //djui_panel_menu_create("Peter Fedak: for explaining how the original visible PUs romhack works.\nPlayerPro342: for some help");
+    djui_cursor_input_controlled_center(&button1->base);
+    }
+    djui_panel_add(caller, panel, NULL);
+    gInteractableOverridePad = true;
+    }
+}
 
 static void djui_panel_main_quit(struct DjuiBase* caller) {
     djui_panel_confirm_create(caller,
@@ -22,7 +38,7 @@ static void djui_panel_main_quit(struct DjuiBase* caller) {
 }
 
 void djui_panel_main_create(struct DjuiBase* caller) {
-    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#ff0800\\SM\\#1be700\\64\\#00b3ff\\EX\n\\#ffef00\\COOP");
+    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#ff0800\\SM\\#1be700\\64\\#00b3ff\\VISIBLE\\#donkey\\PUS\n\\#ffef00\\COOP");
     {
         struct DjuiBase* body = djui_three_panel_get_body(panel);
         {
@@ -31,6 +47,7 @@ void djui_panel_main_create(struct DjuiBase* caller) {
 
             djui_button_create(body, DLANG(MAIN, JOIN), DJUI_BUTTON_STYLE_NORMAL, djui_panel_join_create);
             djui_button_create(body, DLANG(MAIN, OPTIONS), DJUI_BUTTON_STYLE_NORMAL, djui_panel_options_create);
+            djui_button_create(body, DLANG(MAIN, Credits), DJUI_BUTTON_STYLE_NORMAL, djui_panel_main_credits);
             djui_button_create(body, DLANG(MAIN, QUIT), DJUI_BUTTON_STYLE_BACK, djui_panel_main_quit);
         }
 

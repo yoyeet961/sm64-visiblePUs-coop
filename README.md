@@ -1,8 +1,10 @@
 # sm64-visiblePUs-coop
 A fork of sm64ex-coop, trying to make PUs visible.
 Currently has a lot of glitches, but I will try to fix them.
-Version: beta 4.1 (sm64ex-coop version: beta 35)
-Latest dev version: beta 5
+Version: beta 6 (sm64ex-coop version: beta 35)
+Latest dev version: beta 6
+
+Hold L, Z and press A to toggle the PU display.
 
 ## Goal
 Make parallel universes visible, with absolutely no glitches.

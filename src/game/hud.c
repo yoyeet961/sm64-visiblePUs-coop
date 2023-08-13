@@ -2,6 +2,7 @@
 #include <PR/ultratypes.h>
 
 #include "sm64.h"
+#include "math.h"
 #include "actors/common1.h"
 #include "gfx_dimensions.h"
 #include "game_init.h"
@@ -32,6 +33,16 @@ u8 gOverrideHideHud;
  * That includes stars, lives, coins, camera status, power meter, timer
  * cannon reticle, and the unused keys.
  **/
+bool displayOn = true;
+struct MarioState *m = &gMarioStates[0];
+
+    // if ((m->controller->buttonDown & L_TRIG)!=0) {
+    //     if ((m->controller->buttonDown & Z_TRIG)!=0) {
+    //         if ((m->controller->buttonPressed & A_BUTTON)!=0) {
+    //             displayOn = !displayOn;
+    //         }
+    //     }
+    // }
 
 struct PowerMeterHUD {
     s8 animation;
@@ -464,6 +475,85 @@ void render_hud_coins(void) {
     print_text_fmt_int(198, HUD_TOP_Y, "%d", gHudDisplay.coins);
 }
 
+/**
+ * Renders the PU Display.
+ */
+void render_pu_display(void) {
+    // struct MarioState *m = &gMarioStates[0];
+    struct MarioState *m = &gMarioStates[0];
+    bool displayOn = true;
+
+    int puX, puZ;
+
+    if (m->pos[0] >= 0) {
+        puX = floor((8192 + m->pos[0]) / 65536);
+    } else {
+        puX = ceil((-8192 + m->pos[0]) / 65536);
+    }
+
+    if (m->pos[2] >= 0) {
+        puZ = floor((8192 + m->pos[2]) / 65536);
+    } else {
+        puZ = ceil((-8192 + m->pos[2]) / 65536);
+    }
+    // int value = m->pos[1];
+    // int interval = 65536;
+    // if (value >= 0) {
+    //     puX = value / interval;
+    // } else {
+    //     // Adjust the mapping for negative values
+    //     puX = (value - (interval - 1)) / interval;
+    // };
+    // int value2 = m->pos[3];
+    // if (value >= 0) {
+    //     puZ = value2 / interval;
+    // } else {
+    //     // Adjust the mapping for negative values
+    //     puZ = (value2 - (interval - 1)) / interval;
+    // };
+
+    // int height;
+    // height = djui_hud_get_screen_height();
+    // int width;
+    // width = djui_hud_get_screen_width();
+    // char buffer[20];
+    // const char * str1 = "PU X Pos ";
+    // const char * str2 = sprintf(buffer, "%d", puX);
+    // // char result[strlen(str1) + strlen(str2) + 1]; // +1 for the null-terminator
+    // // strcpy(result, str1);
+    // // strcat(result, str2);
+    // const char * str3 = "PU 2 Pos ";
+    // const char * str4 = sprintf(buffer, "%d", puZ);
+    // char result2[strlen(str1) + strlen(str2) + 1]; // +1 for the null-terminator
+    // strcpy(result2, str3);
+    // strcat(result2, str4);
+    // djui_hud_print_text(result, width / 100, height / 1.25, 1);
+    // djui_hud_print_text(result2, width / 100, (height / 1.25) + 20, 1);
+    // djui_text_create(&gDjuiRoot->base, result);
+    char prefix[] = "PU 3 POS ";
+    char puZString[20];
+    char combinedString[125];
+    sprintf(puZString, "%d", puZ);
+    strcpy(combinedString, prefix); // Copy the prefix into combinedString
+    strcat(combinedString, puZString); // Concatenate the puZ string to combinedString
+    char prefix2[] = "PU 1 POS ";
+    char puXString[20];
+    char combinedString2[125];
+    sprintf(puXString, "%d", puX);
+    strcpy(combinedString2, prefix2); // Copy the prefix into combinedString2
+    strcat(combinedString2, puXString); // Concatenate the puZ string to combinedString2
+    print_text(gfx_dimensions_rect_from_left_edge(10), 32, combinedString2);
+    print_text(gfx_dimensions_rect_from_left_edge(10), 16, combinedString);
+    // u16 inputFlags = m->input;
+    // if ((inputFlags & L_TRIG)) {
+    //     if ((inputFlags & Z_TRIG)) {
+    //         if ((inputFlags & A_BUTTON)) {
+    //             displayOn = !displayOn;
+    //         }
+    //     }
+    // }
+}
+
 #ifdef VERSION_JP
 #define HUD_STARS_X 73
 #else
@@ -639,9 +729,19 @@ void render_hud(void) {
         if (gCurrentArea != NULL && gCurrentArea->camera != NULL && gCurrentArea->camera->mode == CAMERA_MODE_INSIDE_CANNON) {
             render_hud_cannon_reticle();
         }
+        if ((m->controller->buttonDown & L_TRIG)!=0) {
+        if ((m->controller->buttonDown & Z_TRIG)!=0) {
+            if ((m->controller->buttonPressed & A_BUTTON)!=0) {
+                displayOn = !displayOn;
+            }
+        }
+    }
 
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES && showHud) {
             render_hud_mario_lives();
+        }
+        if (displayOn) {
+            render_pu_display();
         }
 
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES && showHud && gLevelValues.hudCapTimer) {

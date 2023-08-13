@@ -17,6 +17,9 @@
 #include "game/skybox.h"
 #include "include/course_table.h"
 #include "game/object_list_processor.h"
+#include "ultra64.h"
+// typedef float Mat4[4][4];
+// typedef float Mtx[4][4];
 
 /**
  * This file contains the code that processes the scene graph for rendering.
@@ -329,7 +332,13 @@ void patch_mtx_interpolated(f32 delta) {
 
     gCamSkipInterp = 0;
 }
-
+// void convertMat4ToMtx(const Mat4 mat4, Mtx mtx) {
+//     for (int i = 0; i < 4; ++i) {
+//         for (int j = 0; j < 4; ++j) {
+//             mtx[i][j] = mat4[i][j];
+//         }
+//     }
+// }
 /**
  * Increments the matrix stack index and sets the matrixs at the new index.
  */
@@ -564,7 +573,7 @@ static void geo_process_switch(struct GraphNodeSwitchCase *node) {
  */
 static void geo_process_camera(struct GraphNodeCamera *node) {
     Mat4 cameraTransform;
-    Mat4 cameraTransformModified;
+    // Mat4 cameraTransformModified;
     // Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB.
@@ -572,7 +581,13 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
 
     Mtx *rollMtx = alloc_display_list(sizeof(*rollMtx));
     if (rollMtx == NULL) { return; }
-
+    
+        node->prevPos[0] = fmodf(node->prevPos[0], 65536.0f);
+        node->prevPos[1] = fmodf(node->prevPos[1], 65536.0f);
+        node->prevPos[2] = fmodf(node->prevPos[2], 65536.0f);
+        node->prevFocus[0] = fmodf(node->prevFocus[0], 65536.0f);
+        node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
+        node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
     vec3f_copy(node->prevPos, node->pos);
     vec3f_copy(node->prevFocus, node->focus);
 
@@ -583,12 +598,15 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
 
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(rollMtx), G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 
+    // typedef f32 Vec3f[3];
+    //typedef Mtx Mat4;
     // node->pos[0] = fmodf(node->pos[0], 65536.0f);
     // node->pos[1] = fmodf(node->pos[1], 65536.0f);
     // node->pos[2] = fmodf(node->pos[2], 65536.0f);
     // node->focus[0] = fmodf(node->focus[0], 65536.0f);
     // node->focus[1] = fmodf(node->focus[1], 65536.0f);
     // node->focus[2] = fmodf(node->focus[2], 65536.0f);
+    // f32 reducedPos[3], reducedFocus[3];
     // reducedPos[0] = fmodf(node->pos[0], 65536.0f);
     // reducedPos[1] = fmodf(node->pos[1], 65536.0f);
     // reducedPos[2] = fmodf(node->pos[2], 65536.0f);
@@ -646,24 +664,130 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
     //     enableAllObjects();
     // }
 
-    // Mat4 cameraTransformModified;
-    // // mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
-    // mtxf_lookat(cameraTransformModified, node->pos, node->focus, node->roll);
+    //Mat4 cameraTransformModified;
+    // mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+    //mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
     // mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
     // if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
     //     gMatStackFixed[gMatStackIndex + 1] = (Mtx*)malloc(sizeof(Mtx));
     // }
     // memcpy(gMatStackFixed[gMatStackIndex + 1], &cameraTransformModified, sizeof(Mtx));
-
+// node->pos[0] = fmodf((node->pos[0] + 65536.0f), 65536.0f);
+// node->pos[1] = fmodf((node->pos[1] + 65536.0f), 65536.0f);
+// node->pos[2] = fmodf((node->pos[2] + 65536.0f), 65536.0f);
+// node->focus[0] = fmodf((node->focus[0] + 65536.0f), 65536.0f);
+// node->focus[1] = fmodf((node->focus[1] + 65536.0f), 65536.0f);
+// node->focus[2] = fmodf((node->focus[2] + 65536.0f), 65536.0f);
+// node->pos[0] = fmodf(node->pos[0], 65536.0f);
+// node->pos[1] = fmodf(node->pos[1], 65536.0f);
+// node->pos[2] = fmodf(node->pos[2], 65536.0f);
+// node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// node->focus[2] = fmodf(node->focus[2], 65536.0f);
+// f32 reducedPos[3],reducedFocus[3];
 mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+// mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransformModified, gMatStack[gMatStackIndex]);
 mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
 node->pos[0] = fmodf(node->pos[0], 65536.0f);
+if (node->pos[0] > 32768.0f) {
+    node->pos[0] = node->pos[0] - 65536.0f;
+}
+if (node->pos[0] < -32768.0f) {
+    node->pos[0] = node->pos[0] + 65536.0f;
+}
 node->pos[1] = fmodf(node->pos[1], 65536.0f);
+if (node->pos[1] > 32768.0f) {
+    node->pos[1] = node->pos[1] - 65536.0f;
+}
+if (node->pos[1] < -32768.0f) {
+    node->pos[1] = node->pos[1] + 65536.0f;
+}
 node->pos[2] = fmodf(node->pos[2], 65536.0f);
+if (node->pos[2] > 32768.0f) {
+    node->pos[2] = node->pos[2] - 65536.0f;
+}
+if (node->pos[2] < -32768.0f) {
+    node->pos[2] = node->pos[2] + 65536.0f;
+}
 node->focus[0] = fmodf(node->focus[0], 65536.0f);
+if (node->focus[0] > 32768.0f) {
+    node->focus[0] = node->focus[0] - 65536.0f;
+}
+if (node->focus[0] < -32768.0f) {
+    node->focus[0] = node->focus[0] + 65536.0f;
+}
 node->focus[1] = fmodf(node->focus[1], 65536.0f);
+if (node->focus[1] > 32768.0f) {
+    node->focus[1] = node->focus[1] - 65536.0f;
+}
+if (node->focus[1] < -32768.0f) {
+    node->focus[1] = node->focus[1] + 65536.0f;
+}
 node->focus[2] = fmodf(node->focus[2], 65536.0f);
+if (node->focus[2] > 32768.0f) {
+    node->focus[2] = node->focus[2] - 65536.0f;
+}
+if (node->focus[2] < -32768.0f) {
+    node->focus[2] = node->focus[2] + 65536.0f;
+}
+// Mtx* newMatrix = (Mtx*)malloc(sizeof(Mtx));
+// memcpy(newMatrix, cameraTransform, sizeof(Mtx));
+// gMatStackFixed[gMatStackIndex] = newMatrix;
+// mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+// node->pos[0] = fmodf((node->pos[0] + 65536.0f), 65536.0f);
+// node->pos[1] = fmodf((node->pos[1] + 65536.0f), 65536.0f);
+// node->pos[2] = fmodf((node->pos[2] + 65536.0f), 65536.0f);
+// node->focus[0] = fmodf((node->focus[0] + 65536.0f), 65536.0f);
+// node->focus[1] = fmodf((node->focus[1] + 65536.0f), 65536.0f);
+// node->focus[2] = fmodf((node->focus[2] + 65536.0f), 65536.0f);
+// // mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+// // mtxf_copy(cameraTransform, cameraTransformModified);
+// // node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// // node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// // node->focus[2] = fmodf(node->focus[2], 65536.0f);
+// node->pos[0] = fmodf(node->pos[0], 65536.0f);
+// node->pos[1] = fmodf(node->pos[1], 65536.0f);
+// node->pos[2] = fmodf(node->pos[2], 65536.0f);
+// node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// node->focus[2] = fmodf(node->focus[2], 65536.0f);
+// node->pos[0] = fmodf(node->pos[0], 65536.0f);
+// node->pos[1] = fmodf(node->pos[1], 65536.0f);
+// node->pos[2] = fmodf(node->pos[2], 65536.0f);
+// node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// node->focus[2] = fmodf(node->focus[2], 65536.0f);
+//node->roll = fmodf(node->roll, 65536.0f);
+// node->roll[1] = fmodf(node->roll[1], 65536.0f);
+// node->roll[2] = fmodf(node->roll[2], 65536.0f);
+//mtxf_to_mtx(gMatStackFixed[gMatStackIndex + 1], cameraTransform);
+//memcpy(gMatStackFixed[gMatStackIndex + 1], cameraTransform, sizeof(Mtx));
+    // Mat4 cameraTransformModified;// = alloc_display_list(sizeof(*cameraTransform));
+    // Mtx *MtxPrev = alloc_display_list(sizeof(*MtxPrev));
+    // if (cameraTransformModified == NULL || MtxPrev == NULL) {
+    //     LOG_ERROR("Failed to allocate our matrices for the matrix stack.");
+    //     return FALSE;
+    // }
 
+    // gMatStackIndex++;
+    // if (gMatStackIndex >= MATRIX_STACK_SIZE) {
+    //     LOG_ERROR("Exceeded matrix stack size.");
+    //     gMatStackIndex = MATRIX_STACK_SIZE - 1;
+    //     return FALSE;
+    // }
+    // mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+    // //mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+    // mtxf_to_mtx(cameraTransformModified, gMatStack[gMatStackIndex]);
+    // mtxf_to_mtx(MtxPrev, gMatStackPrev[gMatStackIndex]);
+    // gMatStackFixed[gMatStackIndex] = cameraTransformModified;
+    // gMatStackPrevFixed[gMatStackIndex] = MtxPrev;
+// Mat4 *cameraTransformModified;
+// mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+// malloc(sizeof(Mtx));
+// gMatStackFixed[gMatStackIndex + 1] = cameraTransformModified;
+// Mtx *cameraTransformModifiedMTX;
+// convertMat4ToMtx(&cameraTransformModified, &cameraTransformModifiedMTX);
+// gMatStackFixed[gMatStackIndex] = cameraTransformModifiedMTX;
 // // Update gMatStackFixed with the modified camera transformation
 // if (gMatStackFixed[gMatStackIndex + 1] == NULL) {
 //     gMatStackFixed[gMatStackIndex + 1] = (Mtx*)malloc(sizeof(Mtx));
@@ -691,6 +815,12 @@ node->focus[2] = fmodf(node->focus[2], 65536.0f);
 
     if (gCamSkipInterp) {
         // apply prevpos camera offset
+        // node->prevPos[0] = fmodf(node->prevPos[0], 65536.0f);
+        // node->prevPos[1] = fmodf(node->prevPos[1], 65536.0f);
+        // node->prevPos[2] = fmodf(node->prevPos[2], 65536.0f);
+        // node->prevFocus[0] = fmodf(node->prevFocus[0], 65536.0f);
+        // node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
+        // node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
         vec3f_copy(node->prevPos, node->pos);
         vec3f_add(node->prevPos, gCamSkipInterpDisplacement);
         vec3f_copy(node->prevFocus, node->focus);
@@ -703,16 +833,32 @@ node->focus[2] = fmodf(node->focus[2], 65536.0f);
 
     if (gGlobalTimer == node->prevTimestamp + 1 && gGlobalTimer != gLakituState.skipCameraInterpolationTimestamp) {
         mtxf_lookat(cameraTransform, node->prevPos, node->prevFocus, node->roll);
+        // node->prevPos[0] = fmodf(node->prevPos[0], 65536.0f);
+        // node->prevPos[1] = fmodf(node->prevPos[1], 65536.0f);
+        // node->prevPos[2] = fmodf(node->prevPos[2], 65536.0f);
+        // node->prevFocus[0] = fmodf(node->prevFocus[0], 65536.0f);
+        // node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
+        // node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
         mtxf_mul(gMatStackPrev[gMatStackIndex + 1], cameraTransform, gMatStackPrev[gMatStackIndex]);
     } else {
         mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
         mtxf_mul(gMatStackPrev[gMatStackIndex + 1], cameraTransform, gMatStackPrev[gMatStackIndex]);
     }
+    
+//memcpy(gMatStackFixed[gMatStackIndex], gCamera->mtx, sizeof(gMatStackFixed));
     node->prevTimestamp = gGlobalTimer;
     sCameraNode = node;
 
     // Increment the matrix stack, If we fail to do so. Just return.
     if (!increment_mat_stack()) { return; }
+    //mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+//     node->pos[0] = fmodf(node->pos[0], 32768.0f);
+// node->pos[1] = fmodf(node->pos[1], 32768.0f);
+// node->pos[2] = fmodf(node->pos[2], 32768.0f);
+// node->focus[0] = fmodf(node->focus[0], 32768.0f);
+// node->focus[1] = fmodf(node->focus[1], 32768.0f);
+// node->focus[2] = fmodf(node->focus[2], 32768.0f);
+
 
     // save the camera matrix
     if (gCamera) {
@@ -728,6 +874,43 @@ node->focus[2] = fmodf(node->focus[2], 65536.0f);
         gCurGraphNodeCamera = NULL;
         sUsingCamSpace = FALSE;
     }
+
+//Mat4 modTransform;
+// f32 reducedPos[3], reducedFocus[3];
+// reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+//     reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+//     reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+//     reducedFocus[0] = fmodf(node->focus[0], 65536.0f);
+//     reducedFocus[1] = fmodf(node->focus[1], 65536.0f);
+//     reducedFocus[2] = fmodf(node->focus[2], 65536.0f);
+// node->pos[0] = fmodf(node->pos[0], 65536.0f);
+// node->pos[1] = fmodf(node->pos[1], 65536.0f);
+// node->pos[2] = fmodf(node->pos[2], 65536.0f);
+// node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// node->focus[2] = fmodf(node->focus[2], 65536.0f);
+// mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+// node->pos[0] = fmodf(node->pos[0], 65536.0f);
+// node->pos[1] = fmodf(node->pos[1], 65536.0f);
+// node->pos[2] = fmodf(node->pos[2], 65536.0f);
+// node->focus[0] = fmodf(node->focus[0], 65536.0f);
+// node->focus[1] = fmodf(node->focus[1], 65536.0f);
+// node->focus[2] = fmodf(node->focus[2], 65536.0f);
+    //increment_mat_stack();
+// memcpy(cameraTransform, modTransform, sizeof(cameraTransform));
+//mtxf_to_mtx(gMatStackFixed[gMatStackIndex], modTransform);
+increment_mat_stack();
+//f32 reducedPos[3], reducedFocus[3];
+//     reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+//     reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+//     reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+//     reducedFocus[0] = fmodf(node->focus[0], 65536.0f);
+//     reducedFocus[1] = fmodf(node->focus[1], 65536.0f);
+//     reducedFocus[2] = fmodf(node->focus[2], 65536.0f);
+// mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+// mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+// memcpy(gMatStackFixed[gMatStackIndex], &cameraTransformModified, sizeof(Mtx));
+//memcpy(cameraTransform, cameraTransformModified, sizeof(Mat4));
     gMatStackIndex--;
 }
 
@@ -737,6 +920,41 @@ node->focus[2] = fmodf(node->focus[2], 65536.0f);
  * the float and fixed point matrix stacks.
  * For the rest it acts as a normal display list node.
  */
+
+// static void geo_process_camera(struct GraphNodeCamera *node) {
+// float* t0 = input;
+//     float* a1 = output;
+
+//     while (t0 < input + 4) {  // Assuming the input consists of 4 float values
+//         float t2 = *t0;
+//         float t7 = (t2 >= 0) ? 0 : 0x8000;
+//         float t5 = 0x8000;
+//         float t3 = (int)(t2 * 2.0f) >> 24;
+
+//         if (t3 >= 0x8e) {
+//             float t6 = 0x80ff;
+//             if (t3 != 0x8e) {
+//                 t2 ^= t7;
+//             }
+//         } else {
+//             t3++;
+//             while (t3 != 0x8e) {
+//                 t3--;
+//                 t2 = (t2 << 1) & 0xffffff;
+//             }
+//             if (t3 != 0x8e) {
+//                 t2 = (t2 << 1) & 0xffffff;
+//             }
+//             t2 ^= t7;
+//         }
+
+//         t2 &= 0x80ff;
+//         t2 |= t3 << 23;
+//         *a1 = t2;
+
+//         a1++;
+//         t0++;
+// }
 static void geo_process_translation_rotation(struct GraphNodeTranslationRotation *node) {
     Mat4 mtxf;
     Vec3f translation;

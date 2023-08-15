@@ -5,11 +5,10 @@ Version: beta 6 (sm64ex-coop version: beta 35)
 Latest dev version: beta 6
 
 Hold L, Z and press A to toggle the PU display.
+Current problems: Objects render in PU 0 (you won't be able to see yourself nor objects if you're in a PU, but you will be able to hear yourself and objects)
 
 ## Goal
 Make parallel universes visible, with absolutely no glitches.
 
 ## Contribution
-If you want to help me remove the glitches, please make a pull request.
-It would really help a lot.
-Or you can DM me on Discord. My username is defacube.
+If you want to help me remove the glitches, DM me on discord. My username is defacube

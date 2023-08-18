@@ -5,6 +5,7 @@ Version: beta 6 (sm64ex-coop version: beta 35)
 Latest dev version: beta 6
 
 Hold L, Z and press A to toggle the PU display.
+
 Current problems: Objects render in PU 0 (you won't be able to see yourself nor objects if you're in a PU, but you will be able to hear yourself and objects)
 
 ## Goal

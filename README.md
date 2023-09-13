@@ -12,3 +12,4 @@ Make parallel universes visible, with absolutely no glitches.
 
 ## Contribution
 If you want to help me remove the glitches, DM me on discord. My username is defacube
+Or you can simply make a pull request.

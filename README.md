@@ -11,5 +11,5 @@ Current problems: Objects render in PU 0 (you won't be able to see yourself nor 
 Make parallel universes visible, with absolutely no glitches.
 
 ## Contribution
-If you want to help me remove the glitches, DM me on discord. My username is defacube
+If you want to help me remove the glitches, DM me on discord. My username is defacube.
 Or you can simply make a pull request.

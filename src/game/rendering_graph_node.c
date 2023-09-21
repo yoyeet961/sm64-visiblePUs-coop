@@ -18,6 +18,7 @@
 #include "include/course_table.h"
 #include "game/object_list_processor.h"
 #include "ultra64.h"
+#include "types.h"
 // typedef float Mat4[4][4];
 // typedef float Mtx[4][4];
 
@@ -573,8 +574,15 @@ static void geo_process_switch(struct GraphNodeSwitchCase *node) {
  */
 static void geo_process_camera(struct GraphNodeCamera *node) {
     Mat4 cameraTransform;
-    // Mat4 cameraTransformModified;
-    // Mtx *mtx = alloc_display_list(sizeof(*mtx));
+    //Mat4 cameraTransformOriginal;
+    //Mat4 cameraTransformModified;
+    //Mtx *cameraTransformPusher = alloc_display_list(sizeof(gMatStackFixed));
+    // struct GraphNodeCamera *reducedNode;
+    //Mtx *mtx;
+    //f32 reducedPrevPos[3], reducedPrevFocus[3], reducedPos[3], reducedFocus[3];
+    //f32 reducedPrevPos[3], reducedPrevFocus[3];
+    //f32 reducedPos[3], reducedFocus[3];
+    //Vec3f reducedPos, reducedFocus;
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB.
     if ((gMatStackIndex + 1) >= MATRIX_STACK_SIZE) { LOG_ERROR("Preventing attempt to exceed the maximum size %i for our matrix stack with size of %i.", MATRIX_STACK_SIZE - 1, gMatStackIndex); return; }
@@ -582,13 +590,57 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
     Mtx *rollMtx = alloc_display_list(sizeof(*rollMtx));
     if (rollMtx == NULL) { return; }
     
-        node->prevPos[0] = fmodf(node->prevPos[0], 65536.0f);
-        node->prevPos[1] = fmodf(node->prevPos[1], 65536.0f);
-        node->prevPos[2] = fmodf(node->prevPos[2], 65536.0f);
-        node->prevFocus[0] = fmodf(node->prevFocus[0], 65536.0f);
-        node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
-        node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
+        // node->prevPos[0] = fmodf(node->prevPos[0], 65536.0f);
+        // node->prevPos[1] = fmodf(node->prevPos[1], 65536.0f);
+        // node->prevPos[2] = fmodf(node->prevPos[2], 65536.0f);
+        // node->prevFocus[0] = fmodf(node->prevFocus[0], 65536.0f);
+        // node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
+        // node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
+//         reducedPrevPos[0] = fmodf(node->prevPos[0], 65536.0f);
+// if (reducedPrevPos[0] > 32768.0f) {
+//     reducedPrevPos[0] = reducedPrevPos[0] - 65536.0f;
+// }
+// if (reducedPrevPos[0] < -32768.0f) {
+//     reducedPrevPos[0] = reducedPrevPos[0] + 65536.0f;
+// }
+// reducedPrevPos[1] = fmodf(node->prevPos[1], 65536.0f);
+// if (reducedPrevPos[1] > 32768.0f) {
+//     reducedPrevPos[1] = reducedPrevPos[1] - 65536.0f;
+// }
+// if (reducedPrevPos[1] < -32768.0f) {
+//     reducedPrevPos[1] = reducedPrevPos[1] + 65536.0f;
+// }
+// reducedPrevPos[2] = fmodf(node->prevPos[2], 65536.0f);
+// if (reducedPrevPos[2] > 32768.0f) {
+//     reducedPrevPos[2] = reducedPrevPos[2] - 65536.0f;
+// }
+// if (reducedPrevPos[2] < -32768.0f) {
+//     reducedPrevPos[2] = reducedPrevPos[2] + 65536.0f;
+// }
+// reducedPrevFocus[0] = fmodf(node->prevFocus[0], 65536.0f);
+// if (reducedPrevFocus[0] > 32768.0f) {
+//     reducedPrevFocus[0] = reducedPrevFocus[0] - 65536.0f;
+// }
+// if (reducedPrevFocus[0] < -32768.0f) {
+//     reducedPrevFocus[0] = reducedPrevFocus[0] + 65536.0f;
+// }
+// reducedPrevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
+// if (reducedPrevFocus[1] > 32768.0f) {
+//     reducedPrevFocus[1] = reducedPrevFocus[1] - 65536.0f;
+// }
+// if (reducedPrevFocus[1] < -32768.0f) {
+//     reducedPrevFocus[1] = reducedPrevFocus[1] + 65536.0f;
+// }
+// reducedPrevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
+// if (reducedPrevFocus[2] > 32768.0f) {
+//     reducedPrevFocus[2] = reducedPrevFocus[2] - 65536.0f;
+// }
+// if (reducedPrevFocus[2] < -32768.0f) {
+//     reducedPrevFocus[2] = reducedPrevFocus[2] + 65536.0f;
+// }
     vec3f_copy(node->prevPos, node->pos);
+    //vec3f_copy(reducedPrevPos, reducedPos);
+    //vec3f_copy(reducedPrevFocus, reducedFocus);
     vec3f_copy(node->prevFocus, node->focus);
 
     if (node->fnNode.func != NULL) {
@@ -606,7 +658,7 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
     // node->focus[0] = fmodf(node->focus[0], 65536.0f);
     // node->focus[1] = fmodf(node->focus[1], 65536.0f);
     // node->focus[2] = fmodf(node->focus[2], 65536.0f);
-    // f32 reducedPos[3], reducedFocus[3];
+    //f32 reducedPos[3], reducedFocus[3];
     // reducedPos[0] = fmodf(node->pos[0], 65536.0f);
     // reducedPos[1] = fmodf(node->pos[1], 65536.0f);
     // reducedPos[2] = fmodf(node->pos[2], 65536.0f);
@@ -684,10 +736,79 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
 // node->focus[0] = fmodf(node->focus[0], 65536.0f);
 // node->focus[1] = fmodf(node->focus[1], 65536.0f);
 // node->focus[2] = fmodf(node->focus[2], 65536.0f);
-// f32 reducedPos[3],reducedFocus[3];
+//f32 reducedPos[3], reducedFocus[3];
 mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+// mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+// increment_mat_stack();
+// mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+// gMatStackIndex--;
+//     // memcpy(gMatStackFixed[gMatStackIndex], cameraTransformModified, sizeof(Mtx));
+//     // gMatStackFixed[gMatStackIndex] = ctPusher;
+
+//     reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedPos[0] > 32768.0f) {
+//     reducedPos[0] = reducedPos[0] - 65536.0f;
+// }
+// if (reducedPos[0] < -32768.0f) {
+//     reducedPos[0] = reducedPos[0] + 65536.0f;
+// }
+// reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedPos[1] > 32768.0f) {
+//     reducedPos[1] = reducedPos[1] - 65536.0f;
+// }
+// if (reducedPos[1] < -32768.0f) {
+//     reducedPos[1] = reducedPos[1] + 65536.0f;
+// }
+// reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedPos[2] > 32768.0f) {
+//     reducedPos[2] = reducedPos[2] - 65536.0f;
+// }
+// if (reducedPos[2] < -32768.0f) {
+//     reducedPos[2] = reducedPos[2] + 65536.0f;
+// }
+// reducedFocus[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedFocus[0] > 32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] - 65536.0f;
+// }
+// if (reducedFocus[0] < -32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] + 65536.0f;
+// }
+// reducedFocus[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedFocus[1] > 32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] - 65536.0f;
+// }
+// if (reducedFocus[1] < -32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] + 65536.0f;
+// }
+// reducedFocus[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedFocus[2] > 32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] - 65536.0f;
+// }
+// if (reducedFocus[2] < -32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] + 65536.0f;
+// }
+//mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+//mtxf_lookat(cameraTransformOriginal, node->pos, node->focus, node->roll);
+// mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+//memcpy(cameraTransformPusher, cameraTransformModified, sizeof(Mtx));
+//guMtxF2L(cameraTransformModified, cameraTransformPusher);
+// char buf[20];
+// gcvt(reducedPos, 5, buf)
+// printf(buf);
+//gMatStackFixed[gMatStackIndex] = cameraTransformPusher;
+// mtxf_to_mtx(cameraTransformPusher, cameraTransformModified);
+//if (cameraTransformPusher != NULL) {gMatStackFixed[gMatStackIndex] = cameraTransformPusher;}
+//mtxf_lookat(cameraTransformModified, reducedNode->pos, reducedNode->focus, node->roll);
+//mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+//memcpy(gMatStackFixed[gMatStackIndex], cameraTransformModified, sizeof(Mtx));
+// Mat4 reducedTransform;
 // mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransformModified, gMatStack[gMatStackIndex]);
+// mtxf_lookat(reducedTransform, reducedPos, reducedFocus, node->roll);
+
 mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
+
+//mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+// mtxf_mul(gMatStack[gMatStackIndex + 1], reducedTransform, gMatStack[gMatStackIndex]);
 node->pos[0] = fmodf(node->pos[0], 65536.0f);
 if (node->pos[0] > 32768.0f) {
     node->pos[0] = node->pos[0] - 65536.0f;
@@ -730,6 +851,95 @@ if (node->focus[2] > 32768.0f) {
 if (node->focus[2] < -32768.0f) {
     node->focus[2] = node->focus[2] + 65536.0f;
 }
+// reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedPos[0] > 32768.0f) {
+//     reducedPos[0] = reducedPos[0] - 65536.0f;
+// }
+// if (reducedPos[0] < -32768.0f) {
+//     reducedPos[0] = reducedPos[0] + 65536.0f;
+// }
+// reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedPos[1] > 32768.0f) {
+//     reducedPos[1] = reducedPos[1] - 65536.0f;
+// }
+// if (reducedPos[1] < -32768.0f) {
+//     reducedPos[1] = reducedPos[1] + 65536.0f;
+// }
+// reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedPos[2] > 32768.0f) {
+//     reducedPos[2] = reducedPos[2] - 65536.0f;
+// }
+// if (reducedPos[2] < -32768.0f) {
+//     reducedPos[2] = reducedPos[2] + 65536.0f;
+// }
+// reducedFocus[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedFocus[0] > 32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] - 65536.0f;
+// }
+// if (reducedFocus[0] < -32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] + 65536.0f;
+// }
+// reducedFocus[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedFocus[1] > 32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] - 65536.0f;
+// }
+// if (reducedFocus[1] < -32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] + 65536.0f;
+// }
+// reducedFocus[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedFocus[2] > 32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] - 65536.0f;
+// }
+// if (reducedFocus[2] < -32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] + 65536.0f;
+// }
+// node->pos[0] = reducedPos[0];
+// node->pos[1] = reducedPos[1];
+// node->pos[2] = reducedPos[2];
+// node->focus[0] = reducedFocus[0];
+// node->focus[1] = reducedFocus[1];
+// node->focus[2] = reducedFocus[2];
+// vec3f_set(reducedPos, fmodf(node->pos[0], 65536.0f), fmodf(node->pos[1], 65536.0f), fmodf(node->pos[2], 65536.0f));
+// vec3f_set(reducedFocus, fmodf(node->focus[0], 65536.0f), fmodf(node->focus[1], 65536.0f), fmodf(node->focus[2], 65536.0f));
+// if (reducedPos[0] > 32768.0f) {
+//     reducedPos[0] = reducedPos[0] - 65536.0f;
+// }
+// if (reducedPos[0] < 32768.0f) {
+//     reducedPos[0] = reducedPos[0] + 65536.0f;
+// }
+// if (reducedPos[1] > 32768.0f) {
+//     reducedPos[1] = reducedPos[1] - 65536.0f;
+// }
+// if (reducedPos[1] < 32768.0f) {
+//     reducedPos[1] = reducedPos[1] + 65536.0f;
+// }
+// if (reducedPos[2] > 32768.0f) {
+//     reducedPos[2] = reducedPos[2] - 65536.0f;
+// }
+// if (reducedPos[2] < 32768.0f) {
+//     reducedPos[2] = reducedPos[2] + 65536.0f;
+// }
+// if (reducedFocus[0] > 32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] - 65536.0f;
+// }
+// if (reducedFocus[0] < 32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] + 65536.0f;
+// }
+// if (reducedFocus[1] > 32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] - 65536.0f;
+// }
+// if (reducedFocus[1] < 32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] + 65536.0f;
+// }
+// if (reducedFocus[2] > 32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] - 65536.0f;
+// }
+// if (reducedFocus[2] < 32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] + 65536.0f;
+// }
+// vec3f_set(node->pos, reducedPos[0], reducedPos[1], reducedPos[2]);
+// vec3f_set(node->focus, reducedFocus[0], reducedFocus[1], reducedFocus[2]);
+
 // Mtx* newMatrix = (Mtx*)malloc(sizeof(Mtx));
 // memcpy(newMatrix, cameraTransform, sizeof(Mtx));
 // gMatStackFixed[gMatStackIndex] = newMatrix;
@@ -822,17 +1032,25 @@ if (node->focus[2] < -32768.0f) {
         // node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
         // node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
         vec3f_copy(node->prevPos, node->pos);
+        // vec3f_copy(reducedPrevPos, reducedPos);
         vec3f_add(node->prevPos, gCamSkipInterpDisplacement);
+        // vec3f_add(reducedPrevPos, gCamSkipInterpDisplacement);
         vec3f_copy(node->prevFocus, node->focus);
+        // vec3f_copy(reducedPrevFocus, reducedFocus);
         vec3f_add(node->prevFocus, gCamSkipInterpDisplacement);
+        // vec3f_add(reducedPrevFocus, gCamSkipInterpDisplacement);
     }
 
     // save prevpos camera offset
     vec3f_copy(gCamSkipInterpDisplacement, node->prevPos);
     vec3f_sub(gCamSkipInterpDisplacement, node->pos);
-
+    // vec3f_copy(gCamSkipInterpDisplacement, reducedPrevPos);
+    // vec3f_sub(gCamSkipInterpDisplacement, reducedPos);
+    // Mat4 cameraTransformModified;
+    // f32 reducedPos[3], reducedFocus[3];
     if (gGlobalTimer == node->prevTimestamp + 1 && gGlobalTimer != gLakituState.skipCameraInterpolationTimestamp) {
         mtxf_lookat(cameraTransform, node->prevPos, node->prevFocus, node->roll);
+        //mtxf_lookat(cameraTransformModified, reducedPrevPos, reducedPrevFocus, node->roll);
         // node->prevPos[0] = fmodf(node->prevPos[0], 65536.0f);
         // node->prevPos[1] = fmodf(node->prevPos[1], 65536.0f);
         // node->prevPos[2] = fmodf(node->prevPos[2], 65536.0f);
@@ -840,9 +1058,12 @@ if (node->focus[2] < -32768.0f) {
         // node->prevFocus[1] = fmodf(node->prevFocus[1], 65536.0f);
         // node->prevFocus[2] = fmodf(node->prevFocus[2], 65536.0f);
         mtxf_mul(gMatStackPrev[gMatStackIndex + 1], cameraTransform, gMatStackPrev[gMatStackIndex]);
+       // mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
     } else {
         mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+        //mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
         mtxf_mul(gMatStackPrev[gMatStackIndex + 1], cameraTransform, gMatStackPrev[gMatStackIndex]);
+       // mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
     }
     
 //memcpy(gMatStackFixed[gMatStackIndex], gCamera->mtx, sizeof(gMatStackFixed));
@@ -851,6 +1072,123 @@ if (node->focus[2] < -32768.0f) {
 
     // Increment the matrix stack, If we fail to do so. Just return.
     if (!increment_mat_stack()) { return; }
+//mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+// mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+// // increment_mat_stack();
+// mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+//     reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedPos[0] > 32768.0f) {
+//     reducedPos[0] = reducedPos[0] - 65536.0f;
+// }
+// if (reducedPos[0] < -32768.0f) {
+//     reducedPos[0] = reducedPos[0] + 65536.0f;
+// }
+// reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedPos[1] > 32768.0f) {
+//     reducedPos[1] = reducedPos[1] - 65536.0f;
+// }
+// if (reducedPos[1] < -32768.0f) {
+//     reducedPos[1] = reducedPos[1] + 65536.0f;
+// }
+// reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedPos[2] > 32768.0f) {
+//     reducedPos[2] = reducedPos[2] - 65536.0f;
+// }
+// if (reducedPos[2] < -32768.0f) {
+//     reducedPos[2] = reducedPos[2] + 65536.0f;
+// }
+// reducedFocus[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedFocus[0] > 32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] - 65536.0f;
+// }
+// if (reducedFocus[0] < -32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] + 65536.0f;
+// }
+// reducedFocus[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedFocus[1] > 32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] - 65536.0f;
+// }
+// if (reducedFocus[1] < -32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] + 65536.0f;
+// }
+// reducedFocus[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedFocus[2] > 32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] - 65536.0f;
+// }
+// if (reducedFocus[2] < -32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] + 65536.0f;
+// }
+
+    // Mtx *ctPusher = alloc_display_list(sizeof(Mtx));
+    // Mat4 cameraTransformModified;
+    
+//     mtxf_lookat(cameraTransformModified, reducedPos, reducedFocus, node->roll);
+//mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+//     // memcpy(gMatStackFixed[gMatStackIndex], cameraTransformModified, sizeof(Mtx));
+//     // gMatStackFixed[gMatStackIndex] = ctPusher;
+
+//     reducedPos[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedPos[0] > 32768.0f) {
+//     reducedPos[0] = reducedPos[0] - 65536.0f;
+// }
+// if (reducedPos[0] < -32768.0f) {
+//     reducedPos[0] = reducedPos[0] + 65536.0f;
+// }
+// reducedPos[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedPos[1] > 32768.0f) {
+//     reducedPos[1] = reducedPos[1] - 65536.0f;
+// }
+// if (reducedPos[1] < -32768.0f) {
+//     reducedPos[1] = reducedPos[1] + 65536.0f;
+// }
+// reducedPos[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedPos[2] > 32768.0f) {
+//     reducedPos[2] = reducedPos[2] - 65536.0f;
+// }
+// if (reducedPos[2] < -32768.0f) {
+//     reducedPos[2] = reducedPos[2] + 65536.0f;
+// }
+// reducedFocus[0] = fmodf(node->pos[0], 65536.0f);
+// if (reducedFocus[0] > 32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] - 65536.0f;
+// }
+// if (reducedFocus[0] < -32768.0f) {
+//     reducedFocus[0] = reducedFocus[0] + 65536.0f;
+// }
+// reducedFocus[1] = fmodf(node->pos[1], 65536.0f);
+// if (reducedFocus[1] > 32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] - 65536.0f;
+// }
+// if (reducedFocus[1] < -32768.0f) {
+//     reducedFocus[1] = reducedFocus[1] + 65536.0f;
+// }
+// reducedFocus[2] = fmodf(node->pos[2], 65536.0f);
+// if (reducedFocus[2] > 32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] - 65536.0f;
+// }
+// if (reducedFocus[2] < -32768.0f) {
+//     reducedFocus[2] = reducedFocus[2] + 65536.0f;
+// }
+// mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
+
+    // // mtxf_to_mtx(mtx, reducedTransform);
+    // // gMatStackFixed[gMatStackIndex] = mtx;
+    // Mtx *mtx = alloc_display_list(sizeof(*mtx));
+    // Mtx *mtxPrev = alloc_display_list(sizeof(*mtxPrev));
+    // if (mtx == NULL || mtxPrev == NULL) {
+    //     LOG_ERROR("Failed to allocate our matrices for the matrix stack.");
+    // }
+
+    // gMatStackIndex++;
+    // if (gMatStackIndex >= MATRIX_STACK_SIZE) {
+    //     LOG_ERROR("Exceeded matrix stack size.");
+    //     gMatStackIndex = MATRIX_STACK_SIZE - 1;
+    // }
+
+    // mtxf_to_mtx(mtx, reducedTransform);
+    // mtxf_to_mtx(mtxPrev, gMatStackPrev[gMatStackIndex]);
+    // gMatStackFixed[gMatStackIndex] = mtx;
+    // gMatStackPrevFixed[gMatStackIndex] = mtxPrev;
     //mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
 //     node->pos[0] = fmodf(node->pos[0], 32768.0f);
 // node->pos[1] = fmodf(node->pos[1], 32768.0f);
@@ -874,6 +1212,7 @@ if (node->focus[2] < -32768.0f) {
         gCurGraphNodeCamera = NULL;
         sUsingCamSpace = FALSE;
     }
+    //mtxf_lookat(cameraTransform, reducedPos, reducedFocus, node->roll);
 
 //Mat4 modTransform;
 // f32 reducedPos[3], reducedFocus[3];
@@ -899,7 +1238,7 @@ if (node->focus[2] < -32768.0f) {
     //increment_mat_stack();
 // memcpy(cameraTransform, modTransform, sizeof(cameraTransform));
 //mtxf_to_mtx(gMatStackFixed[gMatStackIndex], modTransform);
-increment_mat_stack();
+//increment_mat_stack();
 //f32 reducedPos[3], reducedFocus[3];
 //     reducedPos[0] = fmodf(node->pos[0], 65536.0f);
 //     reducedPos[1] = fmodf(node->pos[1], 65536.0f);
@@ -911,6 +1250,7 @@ increment_mat_stack();
 // mtxf_to_mtx(gMatStackFixed[gMatStackIndex], cameraTransformModified);
 // memcpy(gMatStackFixed[gMatStackIndex], &cameraTransformModified, sizeof(Mtx));
 //memcpy(cameraTransform, cameraTransformModified, sizeof(Mat4));
+// memcpy(cameraTransform, cameraTransformModified, sizeof(Mat4));
     gMatStackIndex--;
 }
 
@@ -967,6 +1307,7 @@ static void geo_process_translation_rotation(struct GraphNodeTranslationRotation
     mtxf_rotate_zxy_and_translate(mtxf, translation, node->rotation);
     mtxf_mul(gMatStack[gMatStackIndex + 1], mtxf, gMatStack[gMatStackIndex]);
     mtxf_mul(gMatStackPrev[gMatStackIndex + 1], mtxf, gMatStackPrev[gMatStackIndex]);
+    // gMatStackIndex++;
     //gMatStackFixed[gMatStackIndex] = mtx;
 
     // Increment the matrix stack, If we fail to do so. Just return.
@@ -997,6 +1338,7 @@ static void geo_process_translation(struct GraphNodeTranslation *node) {
     mtxf_rotate_zxy_and_translate(mtxf, translation, gVec3sZero);
     mtxf_mul(gMatStack[gMatStackIndex + 1], mtxf, gMatStack[gMatStackIndex]);
     mtxf_mul(gMatStackPrev[gMatStackIndex + 1], mtxf, gMatStackPrev[gMatStackIndex]);
+    // gMatStackIndex++;
 
     // Increment the matrix stack, If we fail to do so. Just return.
     if (!increment_mat_stack()) { return; }
@@ -1032,6 +1374,7 @@ static void geo_process_rotation(struct GraphNodeRotation *node) {
     mtxf_mul(gMatStackPrev[gMatStackIndex + 1], mtxf, gMatStackPrev[gMatStackIndex]);
     vec3s_copy(node->prevRotation, node->rotation);
     node->prevTimestamp = gGlobalTimer;
+    // gMatStackIndex++;
 
     // Increment the matrix stack, If we fail to do so. Just return.
     if (!increment_mat_stack()) { return; }
@@ -1068,6 +1411,7 @@ static void geo_process_scale(struct GraphNodeScale *node) {
     // just use the current scale for now
     vec3f_set(prevScaleVec, node->scale, node->scale, node->scale);
     mtxf_scale_vec3f(gMatStackPrev[gMatStackIndex + 1], gMatStackPrev[gMatStackIndex], scaleVec);
+    // gMatStackIndex++;
 
     // Increment the matrix stack, If we fail to do so. Just return.
     if (!increment_mat_stack()) { return; }
@@ -1488,7 +1832,6 @@ static void geo_process_shadow(struct GraphNodeShadow *node) {
  * Since (0,0,0) is unaffected by rotation, columns 0, 1 and 2 are ignored.
  */
 static s32 obj_is_in_view(struct GraphNodeObject *node, Mat4 matrix) {
-    if (!node || !gCurGraphNodeCamFrustum) { return FALSE; }
 
     if (node->node.flags & GRAPH_RENDER_INVISIBLE) {
         return FALSE;
@@ -1553,6 +1896,38 @@ static void geo_process_object(struct Object *node) {
     Mat4 mtxf;
     s32 hasAnimation = (node->header.gfx.node.flags & GRAPH_RENDER_HAS_ANIMATION) != 0;
     Vec3f scalePrev;
+    if (node == gMarioState->marioObj)
+    {
+        node->header.gfx.skipInViewCheck = true;
+    }
+    if (node->header.gfx.pos[0] >= 32768 || (node->header.gfx.pos[0] <= -32768)) {
+        node->header.gfx.skipInViewCheck = true;
+        if (node->header.gfx.pos[0] > 32768.0f) {
+            node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
+        }
+        if (node->header.gfx.pos[0] < -32768.0f) {
+            node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
+        }
+    }
+    if (node->header.gfx.pos[1] >= 32768 || (node->header.gfx.pos[1] <= -32768)) {
+        node->header.gfx.skipInViewCheck = true;
+        if (node->header.gfx.pos[1] > 32768.0f) {
+            node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
+        }
+        if (node->header.gfx.pos[1] < -32768.0f) {
+            node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
+        }
+    }
+    if (node->header.gfx.pos[2] >= 32768 || (node->header.gfx.pos[2] <= -32768)) {
+        node->header.gfx.skipInViewCheck = true;
+        node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
+        if (node->header.gfx.pos[2] > 32768.0f) {
+            node->header.gfx.pos[2] = node->header.gfx.pos[2] - 65536.0f;
+        }
+        if (node->header.gfx.pos[2] < -32768.0f) {
+            node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
+        }
+    }
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB\.
     if ((gMatStackIndex + 1) >= MATRIX_STACK_SIZE) { LOG_ERROR("Preventing attempt to exceed the maximum size %i for our matrix stack with size of %i.", MATRIX_STACK_SIZE - 1, gMatStackIndex); return; }
@@ -1705,7 +2080,8 @@ static void geo_process_object(struct Object *node) {
                 geo_process_node_and_siblings(node->header.gfx.node.children);
             }
 
-        } else {
+        }
+        else {
             node->header.gfx.prevThrowMatrixTimestamp = 0;
             node->header.gfx.prevTimestamp = 0;
             node->header.gfx.prevScaleTimestamp = 0;

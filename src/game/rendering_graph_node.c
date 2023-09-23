@@ -1900,8 +1900,9 @@ static void geo_process_object(struct Object *node) {
     {
         node->header.gfx.skipInViewCheck = true;
     }
-    if (node->header.gfx.pos[0] >= 32768 || (node->header.gfx.pos[0] <= -32768)) {
+    if ((node->header.gfx.pos[0] >= 32768) || (node->header.gfx.pos[0] <= -32768)) {
         node->header.gfx.skipInViewCheck = true;
+        node->header.gfx.pos[0] = fmodf(node->header.gfx.pos[0], 65536.0f);
         if (node->header.gfx.pos[0] > 32768.0f) {
             node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
         }
@@ -1909,8 +1910,9 @@ static void geo_process_object(struct Object *node) {
             node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
         }
     }
-    if (node->header.gfx.pos[1] >= 32768 || (node->header.gfx.pos[1] <= -32768)) {
+    if ((node->header.gfx.pos[1] >= 32768) || (node->header.gfx.pos[1] <= -32768)) {
         node->header.gfx.skipInViewCheck = true;
+        node->header.gfx.pos[1] = fmodf(node->header.gfx.pos[1], 65536.0f);
         if (node->header.gfx.pos[1] > 32768.0f) {
             node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
         }
@@ -1918,7 +1920,7 @@ static void geo_process_object(struct Object *node) {
             node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
         }
     }
-    if (node->header.gfx.pos[2] >= 32768 || (node->header.gfx.pos[2] <= -32768)) {
+    if ((node->header.gfx.pos[2] >= 32768) || (node->header.gfx.pos[2] <= -32768)) {
         node->header.gfx.skipInViewCheck = true;
         node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
         if (node->header.gfx.pos[2] > 32768.0f) {
@@ -2020,7 +2022,10 @@ static void geo_process_object(struct Object *node) {
                 vec3f_copy(posPrev, node->header.gfx.pos);
                 vec3s_copy(anglePrev, node->header.gfx.angle);
             }
-
+            // Vec3f marioPos;
+            // marioPos[0] = node->oPosX;
+            // marioPos[1] = node->oPosY;
+            // marioPos[2] = node->oPosZ;
             vec3f_copy(node->header.gfx.prevPos, node->header.gfx.pos);
             vec3s_copy(node->header.gfx.prevAngle, node->header.gfx.angle);
             node->header.gfx.prevTimestamp = gGlobalTimer;
@@ -2050,6 +2055,7 @@ static void geo_process_object(struct Object *node) {
         node->header.gfx.cameraToObject[0] = gMatStack[gMatStackIndex][3][0];
         node->header.gfx.cameraToObject[1] = gMatStack[gMatStackIndex][3][1];
         node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
+
 
         // FIXME: correct types
         if (node->header.gfx.animInfo.curAnim != NULL) {

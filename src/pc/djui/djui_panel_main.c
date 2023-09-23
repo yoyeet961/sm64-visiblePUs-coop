@@ -17,7 +17,7 @@ static void nothing() {
     return;
 }
 static void djui_panel_main_credits(struct DjuiBase* caller) {
-    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#00b3ff\\CREDITS\n\n\\#ffffff\\Peter Fedak\nPlayerPro342");
+    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#00b3ff\\CREDITS\n\n\\#ff9900\\Peter Fedak\n\\#0000ff\\PlayerPro342\n\\#cc00cc\\Isaac");
     {
     struct DjuiBase* body = djui_three_panel_get_body(panel);
     {

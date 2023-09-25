@@ -1900,34 +1900,105 @@ static void geo_process_object(struct Object *node) {
     {
         node->header.gfx.skipInViewCheck = true;
     }
-    if ((node->header.gfx.pos[0] >= 32768) || (node->header.gfx.pos[0] <= -32768)) {
-        node->header.gfx.skipInViewCheck = true;
-        node->header.gfx.pos[0] = fmodf(node->header.gfx.pos[0], 65536.0f);
-        if (node->header.gfx.pos[0] > 32768.0f) {
-            node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
-        }
-        if (node->header.gfx.pos[0] < -32768.0f) {
-            node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
-        }
+
+    s32 puX, puY, puZ;
+    s32 objPU_X, objPU_Y, objPU_Z;
+    struct MarioState *m = &gMarioStates[0];
+    if (m->pos[0] >= 0) {
+        puX = floor((8192 + m->pos[0]) / 65536);
+    } else {
+        puX = ceil((-8192 + m->pos[0]) / 65536);
     }
-    if ((node->header.gfx.pos[1] >= 32768) || (node->header.gfx.pos[1] <= -32768)) {
-        node->header.gfx.skipInViewCheck = true;
-        node->header.gfx.pos[1] = fmodf(node->header.gfx.pos[1], 65536.0f);
-        if (node->header.gfx.pos[1] > 32768.0f) {
-            node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
-        }
-        if (node->header.gfx.pos[1] < -32768.0f) {
-            node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
-        }
+
+    if (m->pos[1] >= 0) {
+        puY = floor((8192 + m->pos[1]) / 65536);
+    } else {
+        puY = ceil((-8192 + m->pos[1]) / 65536);
     }
-    if ((node->header.gfx.pos[2] >= 32768) || (node->header.gfx.pos[2] <= -32768)) {
-        node->header.gfx.skipInViewCheck = true;
-        node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
-        if (node->header.gfx.pos[2] > 32768.0f) {
-            node->header.gfx.pos[2] = node->header.gfx.pos[2] - 65536.0f;
+
+    if (m->pos[2] >= 0) {
+        puZ = floor((8192 + m->pos[2]) / 65536);
+    } else {
+        puZ = ceil((-8192 + m->pos[2]) / 65536);
+    }
+
+    if (node->header.gfx.pos[0] >= 0) {
+        objPU_X = floor((8192 + node->header.gfx.pos[0]) / 65536);
+    } else {
+        objPU_X = ceil((-8192 + node->header.gfx.pos[0]) / 65536);
+    }
+
+    if (node->header.gfx.pos[1] >= 0) {
+        objPU_Y = floor((8192 + node->header.gfx.pos[1]) / 65536);
+    } else {
+        objPU_Y = ceil((-8192 + node->header.gfx.pos[1]) / 65536);
+    }
+
+    if (node->header.gfx.pos[2] >= 0) {
+        objPU_Z = floor((8192 + node->header.gfx.pos[2]) / 65536);
+    } else {
+        objPU_Z = ceil((-8192 + node->header.gfx.pos[2]) / 65536);
+    }
+    if ((objPU_X == puX) && (objPU_Y == puY) && (objPU_Z == puZ)) {
+        if ((node->header.gfx.pos[0] >= 32768) && (gMarioStates[0].pos[0] >= 32768)) {
+            node->header.gfx.skipInViewCheck = true;
+            node->header.gfx.pos[0] = fmodf(node->header.gfx.pos[0], 65536.0f);
+            if (node->header.gfx.pos[0] > 32768.0f) {
+                node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
+            }
+            if (node->header.gfx.pos[0] < -32768.0f) {
+                node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
+            }
         }
-        if (node->header.gfx.pos[2] < -32768.0f) {
-            node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
+        if ((node->header.gfx.pos[1] >= 32768) && (gMarioStates[0].pos[1] >= 32768)) {
+            node->header.gfx.skipInViewCheck = true;
+            node->header.gfx.pos[1] = fmodf(node->header.gfx.pos[1], 65536.0f);
+            if (node->header.gfx.pos[1] > 32768.0f) {
+                node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
+            }
+            if (node->header.gfx.pos[1] < -32768.0f) {
+                node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
+            }
+        }
+        if ((node->header.gfx.pos[2] >= 32768) && (gMarioStates[0].pos[2] >= 32768)) {
+            node->header.gfx.skipInViewCheck = true;
+            node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
+            if (node->header.gfx.pos[2] > 32768.0f) {
+                node->header.gfx.pos[2] = node->header.gfx.pos[2] - 65536.0f;
+            }
+            if (node->header.gfx.pos[2] < -32768.0f) {
+                node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
+            }
+        }
+        if ((node->header.gfx.pos[0] <= -32768) && (gMarioStates[0].pos[0] <= -32768)) {
+            node->header.gfx.skipInViewCheck = true;
+            node->header.gfx.pos[0] = fmodf(node->header.gfx.pos[0], 65536.0f);
+            if (node->header.gfx.pos[0] > 32768.0f) {
+                node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
+            }
+            if (node->header.gfx.pos[0] < -32768.0f) {
+                node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
+            }
+        }
+        if ((node->header.gfx.pos[1] <= -32768) && (gMarioStates[0].pos[1] <= -32768)) {
+            node->header.gfx.skipInViewCheck = true;
+            node->header.gfx.pos[1] = fmodf(node->header.gfx.pos[1], 65536.0f);
+            if (node->header.gfx.pos[1] > 32768.0f) {
+                node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
+            }
+            if (node->header.gfx.pos[1] < -32768.0f) {
+                node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
+            }
+        }
+        if ((node->header.gfx.pos[2] <= -32768) && (gMarioStates[0].pos[2] <= -32768)) {
+            node->header.gfx.skipInViewCheck = true;
+            node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
+            if (node->header.gfx.pos[2] > 32768.0f) {
+                node->header.gfx.pos[2] = node->header.gfx.pos[2] - 65536.0f;
+            }
+            if (node->header.gfx.pos[2] < -32768.0f) {
+                node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
+            }
         }
     }
 
@@ -2022,10 +2093,7 @@ static void geo_process_object(struct Object *node) {
                 vec3f_copy(posPrev, node->header.gfx.pos);
                 vec3s_copy(anglePrev, node->header.gfx.angle);
             }
-            // Vec3f marioPos;
-            // marioPos[0] = node->oPosX;
-            // marioPos[1] = node->oPosY;
-            // marioPos[2] = node->oPosZ;
+            
             vec3f_copy(node->header.gfx.prevPos, node->header.gfx.pos);
             vec3s_copy(node->header.gfx.prevAngle, node->header.gfx.angle);
             node->header.gfx.prevTimestamp = gGlobalTimer;
@@ -2055,7 +2123,7 @@ static void geo_process_object(struct Object *node) {
         node->header.gfx.cameraToObject[0] = gMatStack[gMatStackIndex][3][0];
         node->header.gfx.cameraToObject[1] = gMatStack[gMatStackIndex][3][1];
         node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
-
+        
 
         // FIXME: correct types
         if (node->header.gfx.animInfo.curAnim != NULL) {

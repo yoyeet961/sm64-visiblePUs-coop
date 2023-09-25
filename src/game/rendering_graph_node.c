@@ -2001,6 +2001,9 @@ static void geo_process_object(struct Object *node) {
             }
         }
     }
+    else {
+        node->header.gfx.skipInViewCheck = false;
+    }
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB\.
     if ((gMatStackIndex + 1) >= MATRIX_STACK_SIZE) { LOG_ERROR("Preventing attempt to exceed the maximum size %i for our matrix stack with size of %i.", MATRIX_STACK_SIZE - 1, gMatStackIndex); return; }
@@ -2120,9 +2123,19 @@ static void geo_process_object(struct Object *node) {
                          scalePrev);
         node->header.gfx.throwMatrix = &gMatStack[++gMatStackIndex];
         node->header.gfx.throwMatrixPrev = &gMatStackPrev[gMatStackIndex];
-        node->header.gfx.cameraToObject[0] = gMatStack[gMatStackIndex][3][0];
-        node->header.gfx.cameraToObject[1] = gMatStack[gMatStackIndex][3][1];
-        node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
+        if ((node->oPosX < 32768) && (node->oPosX > -32768) && (node->oPosY < 32768) && (node->oPosY > -32768) && (node->oPosZ < 32768) && (node->oPosZ > -32768)) {
+            node->header.gfx.cameraToObject[0] = gMatStack[gMatStackIndex][3][0];
+            node->header.gfx.cameraToObject[1] = gMatStack[gMatStackIndex][3][1];
+            node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
+        }
+        else {
+            if (gCamera) {
+                node->header.gfx.cameraToObject[0] = (node->oPosX - gCamera->pos[0]);
+                node->header.gfx.cameraToObject[1] = (node->oPosY - gCamera->pos[1]);
+                node->header.gfx.cameraToObject[2] = (node->oPosZ - gCamera->pos[2]);
+            }
+        }
+        
         
 
         // FIXME: correct types

@@ -52,7 +52,7 @@ void djui_panel_main_create(struct DjuiBase* caller) {
         }
 
         //char* version = get_version_local();
-        struct DjuiText* footer = djui_text_create(&panel->base, "beta 35\nvisible PUs version beta 8.1");
+        struct DjuiText* footer = djui_text_create(&panel->base, "beta 35\nvisible PUs version beta 9");
         djui_base_set_size_type(&footer->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
         djui_base_set_size(&footer->base, 1.0f, 1.0f);
         djui_base_set_color(&footer->base, 50, 50, 50, 255);

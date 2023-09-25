@@ -6,7 +6,7 @@ Version: beta 8.1 (sm64ex-coop version: beta 35)
 Latest dev version: beta 8.1 (sm64ex-coop version: beta 35)
 
 Hold L, Z and press A to toggle the PU display.
-Current problems: Mario can't be heard, and people can punch you in PU 0 even if you're in a PU.
+Current problems: Mario can't be heard.
 
 ## Goal
 Make parallel universes visible, with absolutely no glitches.

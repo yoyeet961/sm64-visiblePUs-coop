@@ -718,8 +718,12 @@ s32 act_grabbed(struct MarioState *m) {
         if (m->usedObj != NULL) {
             m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
         }
-
-        vec3f_copy(m->pos, m->marioObj->header.gfx.pos);
+        if ((m->pos[0] >= 32768) || (m->pos[0] <= -32768) || (m->pos[1] >= 32768) || (m->pos[1] <= -32768) || (m->pos[2] >= 32768) || (m->pos[2] <= -32768)) {
+            
+        }
+        else {
+            vec3f_copy(m->pos, m->marioObj->header.gfx.pos);
+        }
         queue_rumble_data_mario(m, 5, 60);
 
         m->heldByObj = NULL;

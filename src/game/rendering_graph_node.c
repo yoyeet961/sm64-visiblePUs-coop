@@ -2147,26 +2147,68 @@ static void geo_process_object(struct Object *node) {
             node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
         }
         else {
+    //         s32 puX, puY, puZ;
+    // s32 objPU_X, objPU_Y, objPU_Z;
+    // struct MarioState *m = &gMarioStates[0];
+    // if (m->pos[0] >= 0) {
+    //     puX = floor((8192 + m->pos[0]) / 65536);
+    // } else {
+    //     puX = ceil((-8192 + m->pos[0]) / 65536);
+    // }
+
+    // if (m->pos[1] >= 0) {
+    //     puY = floor((8192 + m->pos[1]) / 65536);
+    // } else {
+    //     puY = ceil((-8192 + m->pos[1]) / 65536);
+    // }
+
+    // if (m->pos[2] >= 0) {
+    //     puZ = floor((8192 + m->pos[2]) / 65536);
+    // } else {
+    //     puZ = ceil((-8192 + m->pos[2]) / 65536);
+    // }
+
+    // if (node->oPosX >= 0) {
+    //     objPU_X = floor((8192 + node->oPosX) / 65536);
+    // } else {
+    //     objPU_X = ceil((-8192 + node->oPosX) / 65536);
+    // }
+
+    // if (node->oPosY >= 0) {
+    //     objPU_Y = floor((8192 + node->oPosY) / 65536);
+    // } else {
+    //     objPU_Y = ceil((-8192 + node->oPosY) / 65536);
+    // }
+
+    // if (node->oPosZ >= 0) {
+    //     objPU_Z = floor((8192 + node->oPosZ) / 65536);
+    // } else {
+    //     objPU_Z = ceil((-8192 + node->oPosZ) / 65536);
+    // }
+        //if ((objPU_X == puX) && (objPU_Y == puY) && (objPU_Z == puZ)) {
             if (gCamera) {
                 Mat4 matrix[4];
                 Vec3f objPos;
-                objPos[0] = node->oPosX;
-                objPos[1] = node->oPosY;
-                objPos[2] = node->oPosZ;
+                objPos[0] = node->oPosX - gCamera->pos[0];
+                objPos[1] = node->oPosY - gCamera->pos[1];
+                objPos[2] = node->oPosZ - gCamera->pos[2];
                 s16 objAngle[3];
                 objAngle[0] = node->header.gfx.angle[0];
                 objAngle[1] = node->header.gfx.angle[1];
                 objAngle[2] = node->header.gfx.angle[2];
                 mtxf_rotate_zxy_and_translate(matrix, objPos, objAngle);
+                // Vec3f matrix_soundDecreased;
                 // node->header.gfx.cameraToObject[0] = (node->oPosX - gCamera->pos[0]);
                 // node->header.gfx.cameraToObject[1] = (node->oPosY - gCamera->pos[1]);
                 // node->header.gfx.cameraToObject[2] = (node->oPosZ - gCamera->pos[2]);
                 // node->header.gfx.cameraToObject[0] = matrix[3][0];
                 // node->header.gfx.cameraToObject[1] = matrix[3][1];
                 // node->header.gfx.cameraToObject[2] = matrix[3][2];
+                //vec3f_sub(matrix[3], gCamera->pos);
                 vec3f_copy(node->header.gfx.cameraToObject, matrix[3]);
             }
         }
+        //}
         
         
 

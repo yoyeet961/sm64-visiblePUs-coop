@@ -656,10 +656,15 @@ Gfx* geo_switch_mario_hand_grab_pos(s32 callContext, struct GraphNode* b, Mat4* 
         // ! The HOLP is set here, which is why it only updates when the held object is drawn.
         // This is why it won't update during a pause buffered hitstun or when the camera is very far
         // away.
-        if ((marioState->pos[0] > 32768) || (marioState->pos[1] > 32768) || (marioState->pos[2] < -32768) || (marioState->pos[0] < -32768) || (marioState->pos[1] < -32768) || (marioState->pos[2] < -32768)) {
-            marioState->marioBodyState->heldObjLastPosition[0] = marioState->pos[0];
-            marioState->marioBodyState->heldObjLastPosition[1] = marioState->pos[1];
-            marioState->marioBodyState->heldObjLastPosition[2] = marioState->pos[2];
+        if ((marioState->pos[0] >= 32768) || (marioState->pos[1] >= 32768) || (marioState->pos[2] <= -32768) || (marioState->pos[0] <= -32768) || (marioState->pos[1] <= -32768) || (marioState->pos[2] <= -32768)) {
+            get_pos_from_transform_mtx(marioState->marioBodyState->heldObjLastPosition, *curTransform,
+                (f32(*)[4])gCurGraphNodeCamera->matrixPtr);
+            // marioState->marioBodyState->heldObjLastPosition[0] = marioState->pos[0];
+            // marioState->marioBodyState->heldObjLastPosition[1] = marioState->pos[1];
+            // marioState->marioBodyState->heldObjLastPosition[2] = marioState->pos[2];
+            Vec3f offset;
+            vec3f_set(offset, marioState->marioBodyState->heldObjLastPosition[0] - marioState->marioObj->header.gfx.pos[0], marioState->marioBodyState->heldObjLastPosition[1] - marioState->marioObj->header.gfx.pos[1], marioState->marioBodyState->heldObjLastPosition[2] - marioState->marioObj->header.gfx.pos[2]);
+            vec3f_set(marioState->marioBodyState->heldObjLastPosition, marioState->pos[0] + offset[0], marioState->pos[1] + offset[1], marioState->pos[2] + offset[2]);
         }
         else {
             get_pos_from_transform_mtx(marioState->marioBodyState->heldObjLastPosition, *curTransform,

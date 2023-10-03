@@ -12,7 +12,16 @@ void common_anchor_mario_behavior(f32 sp28, f32 sp2C, s32 sp30) {
             case 0:
                 break;
             case 1:
-                obj_set_gfx_pos_at_obj_pos(player, o);
+                // obj_set_gfx_pos_at_obj_pos(player, o);
+                // if ((player->oPosX >= 32768) || (player->oPosX <= -32768) || (player->oPosY >= 32768) || (player->oPosY <= -32768) || (player->oPosZ >= 32768) || (player->oPosZ <= -32768)) {
+                if ((o->oPosX >= 32768) || (o->oPosX <= -32768) || (o->oPosY >= 32768) || (o->oPosY <= -32768) || (o->oPosZ >= 32768) || (o->oPosZ <= -32768)) {
+                    marioState->pos[0] = o->oPosX;
+                    marioState->pos[1] = o->oPosY;
+                    marioState->pos[2] = o->oPosZ;
+                }
+                else {
+                    obj_set_gfx_pos_at_obj_pos(player, o);
+                }
                 break;
             case 2:
                 player->oInteractStatus |= (sp30 + INT_STATUS_MARIO_UNK2);

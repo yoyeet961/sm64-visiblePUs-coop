@@ -2141,7 +2141,7 @@ static void geo_process_object(struct Object *node) {
                          scalePrev);
         node->header.gfx.throwMatrix = &gMatStack[++gMatStackIndex];
         node->header.gfx.throwMatrixPrev = &gMatStackPrev[gMatStackIndex];
-        if ((node->oPosX < 32768) && (node->oPosX > -32768) && (node->oPosY < 32768) && (node->oPosY > -32768) && (node->oPosZ < 32768) && (node->oPosZ > -32768)) {
+        if (((m->pos[0] < 32768) && (m->pos[0] > -32768) && (m->pos[1] < 32768) && (m->pos[1] > -32768) && (m->pos[2] < 32768) && (m->pos[2] > -32768))) {
             node->header.gfx.cameraToObject[0] = gMatStack[gMatStackIndex][3][0];
             node->header.gfx.cameraToObject[1] = gMatStack[gMatStackIndex][3][1];
             node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
@@ -2186,7 +2186,8 @@ static void geo_process_object(struct Object *node) {
     //     objPU_Z = ceil((-8192 + node->oPosZ) / 65536);
     // }
         //if ((objPU_X == puX) && (objPU_Y == puY) && (objPU_Z == puZ)) {
-            if (gCamera) {
+            //if (gCamera) {
+            if ((node->oPosX >= 32768) || (node->oPosX <= -32768) || (node->oPosY >= 32768) || (node->oPosY <= -32768) || (node->oPosZ >= 32768) || (node->oPosZ <= -32768)) {
                 Mat4 matrix[4];
                 Vec3f objPos;
                 objPos[0] = node->oPosX - gCamera->pos[0];

@@ -1939,6 +1939,7 @@ static void geo_process_object(struct Object *node) {
     // } else {
     //     objPU_Z = ceil((-8192 + node->header.gfx.pos[2]) / 65536);
     // }
+    //Mat4 oldThrowMatrix;
 
     if (node->oPosX >= 0) {
         objPU_X = floor((8192 + node->oPosX) / 65536);
@@ -1967,6 +1968,29 @@ static void geo_process_object(struct Object *node) {
             if (node->header.gfx.pos[0] < -32768.0f) {
                 node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
             }
+            //oldThrowMatrix = node->header.gfx.throwMatrix;
+            node->header.gfx.throwMatrix = NULL;
+            // node->header.gfx.throwMatrix[0][0] = fmodf(node->header.gfx.throwMatrix[0][0], 65536.0f);
+            // if (node->header.gfx.throwMatrix[0][0] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[0][0] = node->header.gfx.throwMatrix[0][0] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[0][0] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[0][0] = node->header.gfx.throwMatrix[0][0] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[1][0] = fmodf(node->header.gfx.throwMatrix[1][0], 65536.0f);
+            // if (node->header.gfx.throwMatrix[1][0] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[1][0] = node->header.gfx.throwMatrix[1][0] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[1][0] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[1][0] = node->header.gfx.throwMatrix[1][0] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[2][0] = fmodf(node->header.gfx.throwMatrix[2][0], 65536.0f);
+            // if (node->header.gfx.throwMatrix[2][0] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[2][0] = node->header.gfx.throwMatrix[2][0] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[2][0] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[2][0] = node->header.gfx.throwMatrix[2][0] + 65536.0f;
+            // }
         }
         if ((node->header.gfx.pos[1] >= 32768) && (gMarioStates[0].pos[1] >= 32768)) {
             node->header.gfx.skipInViewCheck = true;
@@ -1977,6 +2001,29 @@ static void geo_process_object(struct Object *node) {
             if (node->header.gfx.pos[1] < -32768.0f) {
                 node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
             }
+            //oldThrowMatrix = node->header.gfx.throwMatrix;
+            node->header.gfx.throwMatrix = NULL;
+            // node->header.gfx.throwMatrix[0][1] = fmodf(node->header.gfx.throwMatrix[0][1], 65536.0f);
+            // if (node->header.gfx.throwMatrix[0][1] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[0][1] = node->header.gfx.throwMatrix[0][1] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[0][1] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[0][1] = node->header.gfx.throwMatrix[0][1] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[1][1] = fmodf(node->header.gfx.throwMatrix[1][1], 65536.0f);
+            // if (node->header.gfx.throwMatrix[1][1] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[1][1] = node->header.gfx.throwMatrix[1][1] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[1][1] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[1][1] = node->header.gfx.throwMatrix[1][1] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[2][1] = fmodf(node->header.gfx.throwMatrix[2][1], 65536.0f);
+            // if (node->header.gfx.throwMatrix[2][1] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[2][1] = node->header.gfx.throwMatrix[2][1] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[2][1] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[2][1] = node->header.gfx.throwMatrix[2][1] + 65536.0f;
+            // }
         }
         if ((node->header.gfx.pos[2] >= 32768) && (gMarioStates[0].pos[2] >= 32768)) {
             node->header.gfx.skipInViewCheck = true;
@@ -1987,6 +2034,29 @@ static void geo_process_object(struct Object *node) {
             if (node->header.gfx.pos[2] < -32768.0f) {
                 node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
             }
+            //oldThrowMatrix = node->header.gfx.throwMatrix;
+            node->header.gfx.throwMatrix = NULL;
+            // node->header.gfx.throwMatrix[0][2] = fmodf(node->header.gfx.throwMatrix[0][2], 65536.0f);
+            // if (node->header.gfx.throwMatrix[0][2] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[0][2] = node->header.gfx.throwMatrix[0][2] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[0][2] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[0][2] = node->header.gfx.throwMatrix[0][2] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[1][2] = fmodf(node->header.gfx.throwMatrix[1][2], 65536.0f);
+            // if (node->header.gfx.throwMatrix[1][2] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[1][2] = node->header.gfx.throwMatrix[1][2] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[1][2] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[1][2] = node->header.gfx.throwMatrix[1][2] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[2][2] = fmodf(node->header.gfx.throwMatrix[2][2], 65536.0f);
+            // if (node->header.gfx.throwMatrix[2][2] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[2][2] = node->header.gfx.throwMatrix[2][2] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[2][2] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[2][2] = node->header.gfx.throwMatrix[2][2] + 65536.0f;
+            // }
         }
         if ((node->header.gfx.pos[0] <= -32768) && (gMarioStates[0].pos[0] <= -32768)) {
             node->header.gfx.skipInViewCheck = true;
@@ -1997,6 +2067,29 @@ static void geo_process_object(struct Object *node) {
             if (node->header.gfx.pos[0] < -32768.0f) {
                 node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
             }
+            //oldThrowMatrix = node->header.gfx.throwMatrix;
+            node->header.gfx.throwMatrix = NULL;
+            // node->header.gfx.throwMatrix[0][0] = fmodf(node->header.gfx.throwMatrix[0][0], 65536.0f);
+            // if (node->header.gfx.throwMatrix[0][0] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[0][0] = node->header.gfx.throwMatrix[0][0] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[0][0] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[0][0] = node->header.gfx.throwMatrix[0][0] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[1][0] = fmodf(node->header.gfx.throwMatrix[1][0], 65536.0f);
+            // if (node->header.gfx.throwMatrix[1][0] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[1][0] = node->header.gfx.throwMatrix[1][0] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[1][0] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[1][0] = node->header.gfx.throwMatrix[1][0] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[2][0] = fmodf(node->header.gfx.throwMatrix[2][0], 65536.0f);
+            // if (node->header.gfx.throwMatrix[2][0] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[2][0] = node->header.gfx.throwMatrix[2][0] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[2][0] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[2][0] = node->header.gfx.throwMatrix[2][0] + 65536.0f;
+            // }
         }
         if ((node->header.gfx.pos[1] <= -32768) && (gMarioStates[0].pos[1] <= -32768)) {
             node->header.gfx.skipInViewCheck = true;
@@ -2007,6 +2100,29 @@ static void geo_process_object(struct Object *node) {
             if (node->header.gfx.pos[1] < -32768.0f) {
                 node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
             }
+            //oldThrowMatrix = node->header.gfx.throwMatrix;
+            node->header.gfx.throwMatrix = NULL;
+            // node->header.gfx.throwMatrix[0][1] = fmodf(node->header.gfx.throwMatrix[0][1], 65536.0f);
+            // if (node->header.gfx.throwMatrix[0][1] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[0][1] = node->header.gfx.throwMatrix[0][1] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[0][1] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[0][1] = node->header.gfx.throwMatrix[0][1] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[1][1] = fmodf(node->header.gfx.throwMatrix[1][1], 65536.0f);
+            // if (node->header.gfx.throwMatrix[1][1] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[1][1] = node->header.gfx.throwMatrix[1][1] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[1][1] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[1][1] = node->header.gfx.throwMatrix[1][1] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[2][1] = fmodf(node->header.gfx.throwMatrix[2][1], 65536.0f);
+            // if (node->header.gfx.throwMatrix[2][1] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[2][1] = node->header.gfx.throwMatrix[2][1] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[2][1] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[2][1] = node->header.gfx.throwMatrix[2][1] + 65536.0f;
+            // }
         }
         if ((node->header.gfx.pos[2] <= -32768) && (gMarioStates[0].pos[2] <= -32768)) {
             node->header.gfx.skipInViewCheck = true;
@@ -2017,10 +2133,94 @@ static void geo_process_object(struct Object *node) {
             if (node->header.gfx.pos[2] < -32768.0f) {
                 node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
             }
+            //oldThrowMatrix = node->header.gfx.throwMatrix;
+            node->header.gfx.throwMatrix = NULL;
+            // node->header.gfx.throwMatrix[0][2] = fmodf(node->header.gfx.throwMatrix[0][2], 65536.0f);
+            // if (node->header.gfx.throwMatrix[0][2] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[0][2] = node->header.gfx.throwMatrix[0][2] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[0][2] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[0][2] = node->header.gfx.throwMatrix[0][2] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[1][2] = fmodf(node->header.gfx.throwMatrix[1][2], 65536.0f);
+            // if (node->header.gfx.throwMatrix[1][2] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[1][2] = node->header.gfx.throwMatrix[1][2] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[1][2] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[1][2] = node->header.gfx.throwMatrix[1][2] + 65536.0f;
+            // }
+            // node->header.gfx.throwMatrix[2][2] = fmodf(node->header.gfx.throwMatrix[2][2], 65536.0f);
+            // if (node->header.gfx.throwMatrix[2][2] > 32768.0f) {
+            //     node->header.gfx.throwMatrix[2][2] = node->header.gfx.throwMatrix[2][2] - 65536.0f;
+            // }
+            // if (node->header.gfx.throwMatrix[2][2] < -32768.0f) {
+            //     node->header.gfx.throwMatrix[2][2] = node->header.gfx.throwMatrix[2][2] + 65536.0f;
+            // }
         }
+    //     if ((node->oPosX >= 32768) && (gMarioStates[0].pos[0] >= 32768)) {
+    //         node->header.gfx.skipInViewCheck = true;
+    //         node->header.gfx.pos[0] = fmodf(node->header.gfx.pos[0], 65536.0f);
+    //         if (node->header.gfx.pos[0] > 32768.0f) {
+    //             node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
+    //         }
+    //         if (node->header.gfx.pos[0] < -32768.0f) {
+    //             node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
+    //         }
+    //     }
+    //     if ((node->oPosY >= 32768) && (gMarioStates[0].pos[1] >= 32768)) {
+    //         node->header.gfx.skipInViewCheck = true;
+    //         node->header.gfx.pos[1] = fmodf(node->header.gfx.pos[1], 65536.0f);
+    //         if (node->header.gfx.pos[1] > 32768.0f) {
+    //             node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
+    //         }
+    //         if (node->header.gfx.pos[1] < -32768.0f) {
+    //             node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
+    //         }
+    //     }
+    //     if ((node->oPosZ >= 32768) && (gMarioStates[0].pos[2] >= 32768)) {
+    //         node->header.gfx.skipInViewCheck = true;
+    //         node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
+    //         if (node->header.gfx.pos[2] > 32768.0f) {
+    //             node->header.gfx.pos[2] = node->header.gfx.pos[2] - 65536.0f;
+    //         }
+    //         if (node->header.gfx.pos[2] < -32768.0f) {
+    //             node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
+    //         }
+    //     }
+    //     if ((node->oPosX <= -32768) && (gMarioStates[0].pos[0] <= -32768)) {
+    //         node->header.gfx.skipInViewCheck = true;
+    //         node->header.gfx.pos[0] = fmodf(node->header.gfx.pos[0], 65536.0f);
+    //         if (node->header.gfx.pos[0] > 32768.0f) {
+    //             node->header.gfx.pos[0] = node->header.gfx.pos[0] - 65536.0f;
+    //         }
+    //         if (node->header.gfx.pos[0] < -32768.0f) {
+    //             node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
+    //         }
+    //     }
+    //     if ((node->oPosY <= -32768) && (gMarioStates[0].pos[1] <= -32768)) {
+    //         node->header.gfx.skipInViewCheck = true;
+    //         node->header.gfx.pos[1] = fmodf(node->header.gfx.pos[1], 65536.0f);
+    //         if (node->header.gfx.pos[1] > 32768.0f) {
+    //             node->header.gfx.pos[1] = node->header.gfx.pos[1] - 65536.0f;
+    //         }
+    //         if (node->header.gfx.pos[1] < -32768.0f) {
+    //             node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
+    //         }
+    //     }
+    //     if ((node->oPosZ <= -32768) && (gMarioStates[0].pos[2] <= -32768)) {
+    //         node->header.gfx.skipInViewCheck = true;
+    //         node->header.gfx.pos[2] = fmodf(node->header.gfx.pos[2], 65536.0f);
+    //         if (node->header.gfx.pos[2] > 32768.0f) {
+    //             node->header.gfx.pos[2] = node->header.gfx.pos[2] - 65536.0f;
+    //         }
+    //         if (node->header.gfx.pos[2] < -32768.0f) {
+    //             node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
+    //         }
+    //     }
     }
     else {
         node->header.gfx.skipInViewCheck = false;
+        //oldThrowMatrix = node->header.gfx.throwMatrix;
     }
 
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB\.

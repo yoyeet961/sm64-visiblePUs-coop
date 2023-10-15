@@ -250,13 +250,19 @@ void obj_orient_graph(struct Object *obj, f32 normalX, f32 normalY, f32 normalZ)
         return;
     }
 
-    objVisualPosition[0] = obj->oPosX;
-    objVisualPosition[1] = obj->oPosY + obj->oGraphYOffset;
-    objVisualPosition[2] = obj->oPosZ;
+    // objVisualPosition[0] = obj->oPosX;
+    // objVisualPosition[1] = obj->oPosY + obj->oGraphYOffset;
+    // objVisualPosition[2] = obj->oPosZ;
+    objVisualPosition[0] = obj->header.gfx.pos[0];
+    objVisualPosition[1] = obj->header.gfx.pos[1];
+    objVisualPosition[2] = obj->header.gfx.pos[2];
 
     surfaceNormals[0] = normalX;
     surfaceNormals[1] = normalY;
     surfaceNormals[2] = normalZ;
+    // surfaceNormals[0] = objVisualPosition[0];
+    // surfaceNormals[1] = objVisualPosition[1];
+    // surfaceNormals[2] = objVisualPosition[2];
 
     mtxf_align_terrain_normal(*throwMatrix, surfaceNormals, objVisualPosition, obj->oFaceAngleYaw);
     obj->header.gfx.throwMatrix = throwMatrix;

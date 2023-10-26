@@ -6,7 +6,7 @@ Version: beta 12 (sm64ex-coop version: beta 35)
 Latest dev version: beta 12 (sm64ex-coop version: beta 35)
 
 Hold L, Z and press A to toggle the PU display.
-Current problems: Players can punch you if you're in a PU and they're not (but only if collision is enabled)
+Current problems: Players from PU 0 can be heard, and sometimes your sounds in PUs randomly disappear.
 
 ## Goal
 Make parallel universes visible, with absolutely no glitches.

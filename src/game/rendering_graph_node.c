@@ -394,6 +394,20 @@ static void geo_process_master_list_sub(struct GraphNodeMasterList *node) {
                 detect_and_skip_mtx_interpolation(&currList->transform, &currList->transformPrev);
                 if ((u32) gMtxTblSize < sizeof(gMtxTbl) / sizeof(gMtxTbl[0])) {
                     gMtxTbl[gMtxTblSize].pos = gDisplayListHead;
+                    //gMtxTbl[gMtxTblSize].pos = gMtxTbl[gMtxTblSize].pos % 65536;//fmodl(gMtxTbl[gMtxTblSize].pos, 65536);
+                    // manually modulo gMtxTbl[gMtxTblSize].pos by 65536
+                    // if (gMtxTbl[gMtxTblSize].pos > 65536) {
+                    //     gMtxTbl[gMtxTblSize].pos = gMtxTbl[gMtxTblSize].pos - 65536;
+                    // }
+                    // if (gMtxTbl[gMtxTblSize].pos < -65536) {
+                    //     gMtxTbl[gMtxTblSize].pos = gMtxTbl[gMtxTblSize].pos + 65536;
+                    // }
+                    // if (gMtxTbl[gMtxTblSize].pos > 32768) {
+                    //     gMtxTbl[gMtxTblSize].pos = gMtxTbl[gMtxTblSize].pos - 65536;
+                    // }
+                    // if (gMtxTbl[gMtxTblSize].pos < -32768) {
+                    //     gMtxTbl[gMtxTblSize].pos = gMtxTbl[gMtxTblSize].pos + 65536;
+                    // }
                     gMtxTbl[gMtxTblSize].mtx = currList->transform;
                     gMtxTbl[gMtxTblSize].mtxPrev = currList->transformPrev;
                     gMtxTbl[gMtxTblSize].displayList = currList->displayList;
@@ -2222,7 +2236,6 @@ static void geo_process_object(struct Object *node) {
         node->header.gfx.skipInViewCheck = false;
         //oldThrowMatrix = node->header.gfx.throwMatrix;
     }
-
     // Sanity check our stack index, If we above or equal to our stack size. Return to prevent OOB\.
     if ((gMatStackIndex + 1) >= MATRIX_STACK_SIZE) { LOG_ERROR("Preventing attempt to exceed the maximum size %i for our matrix stack with size of %i.", MATRIX_STACK_SIZE - 1, gMatStackIndex); return; }
 
@@ -2341,7 +2354,8 @@ static void geo_process_object(struct Object *node) {
                          scalePrev);
         node->header.gfx.throwMatrix = &gMatStack[++gMatStackIndex];
         node->header.gfx.throwMatrixPrev = &gMatStackPrev[gMatStackIndex];
-        if (((m->pos[0] < 32768) && (m->pos[0] > -32768) && (m->pos[1] < 32768) && (m->pos[1] > -32768) && (m->pos[2] < 32768) && (m->pos[2] > -32768))) {
+        // if (((m->pos[0] < 32768) && (m->pos[0] > -32768) && (m->pos[1] < 32768) && (m->pos[1] > -32768) && (m->pos[2] < 32768) && (m->pos[2] > -32768))) {
+        if (((node->oPosX < 32768) && (node->oPosX > -32768) && (node->oPosY < 32768) && (node->oPosY > -32768) && (node->oPosZ < 32768) && (node->oPosZ > -32768))) {
             node->header.gfx.cameraToObject[0] = gMatStack[gMatStackIndex][3][0];
             node->header.gfx.cameraToObject[1] = gMatStack[gMatStackIndex][3][1];
             node->header.gfx.cameraToObject[2] = gMatStack[gMatStackIndex][3][2];
@@ -2390,14 +2404,24 @@ static void geo_process_object(struct Object *node) {
             if ((node->oPosX >= 32768) || (node->oPosX <= -32768) || (node->oPosY >= 32768) || (node->oPosY <= -32768) || (node->oPosZ >= 32768) || (node->oPosZ <= -32768)) {
                 Mat4 matrix[4];
                 Vec3f objPos;
-                objPos[0] = node->oPosX - gCamera->pos[0];
-                objPos[1] = node->oPosY - gCamera->pos[1];
-                objPos[2] = node->oPosZ - gCamera->pos[2];
+                objPos[0] = node->oPosX;
+                objPos[1] = node->oPosY;
+                objPos[2] = node->oPosZ;
                 s16 objAngle[3];
                 objAngle[0] = node->header.gfx.angle[0];
                 objAngle[1] = node->header.gfx.angle[1];
                 objAngle[2] = node->header.gfx.angle[2];
+                //Mat4 newMatrix[4];
+            //     double temp;
+            //     temp = sqrt((objPos[0] - gMarioState->pos[0]) * (objPos[0] - gMarioState->pos[0]) +
+            // (objPos[1] - gMarioState->pos[1]) * (objPos[1] - gMarioState->pos[1]) +
+            // (objPos[2] - gMarioState->pos[2]) * (objPos[2] - gMarioState->pos[2]));
+            //     f32 dist = temp;
+            //     Vec3f newPos[3];
+            //     vec3f_set_dist_and_angle(objPos, newPos, dist, objAngle[2], objAngle[1]);
                 mtxf_rotate_zxy_and_translate(matrix, objPos, objAngle);
+                // mtxf_mul(newMatrix, matrix, newMatrix);
+                // mtxf_scale_vec3f(newMatrix, newMatrix, node->header.gfx.scale);
                 // Vec3f matrix_soundDecreased;
                 // node->header.gfx.cameraToObject[0] = (node->oPosX - gCamera->pos[0]);
                 // node->header.gfx.cameraToObject[1] = (node->oPosY - gCamera->pos[1]);

@@ -642,6 +642,7 @@ void network_shutdown(bool sendLeaving, bool exiting, bool popup, bool reconnect
     gOverrideEnvFx = -1;
     gDjuiRenderBehindHud = false;
     gRomhackCameraAllowCentering = TRUE;
+    gRomhackCameraAllowDpad = FALSE;
     camera_reset_overrides();
     dynos_mod_shutdown();
     mods_clear(&gActiveMods);

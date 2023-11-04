@@ -58,8 +58,6 @@ extern "C" {
 #define TITLE ({ char title[96] = ""; snprintf(title, 96, "sm64ex-coop: %s", get_version_local()); title; })
 #endif
 
-#define LOAD_STEPS 6
-
 #define AT_STARTUP __attribute__((constructor))
 
 extern bool gGameInited;

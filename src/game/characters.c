@@ -323,7 +323,7 @@ struct Character gCharacters[CT_MAX] = {
         .torsoRotMult          = 1.0f,
         // anim
         .animOffsetEnabled     = false,
-        
+
         // character anims
         .animSlowLedgeGrab =                    MARIO_ANIM_SLOW_LEDGE_GRAB,
         .animFallOverBackwards =                MARIO_ANIM_FALL_OVER_BACKWARDS,
@@ -600,7 +600,7 @@ struct Character gCharacters[CT_MAX] = {
         .torsoRotMult          = 1.0f,
         // anim
         .animOffsetEnabled     = false,
-        
+
         // character anims
         .animSlowLedgeGrab =                    MARIO_ANIM_SLOW_LEDGE_GRAB,
         .animFallOverBackwards =                MARIO_ANIM_FALL_OVER_BACKWARDS,
@@ -880,7 +880,7 @@ struct Character gCharacters[CT_MAX] = {
         .animOffsetLowYPoint   = 11,
         .animOffsetFeet        = 25,
         .animOffsetHand        = -10,
-        
+
         // character anims
         .animSlowLedgeGrab =                    MARIO_ANIM_SLOW_LEDGE_GRAB,
         .animFallOverBackwards =                MARIO_ANIM_FALL_OVER_BACKWARDS,
@@ -1157,7 +1157,7 @@ struct Character gCharacters[CT_MAX] = {
         .torsoRotMult          = 3.0f / 5.0f,
         // anim
         .animOffsetEnabled     = true,
-        
+
         // character anims
         .animSlowLedgeGrab =                    MARIO_ANIM_SLOW_LEDGE_GRAB,
         .animFallOverBackwards =                MARIO_ANIM_FALL_OVER_BACKWARDS,
@@ -1520,7 +1520,7 @@ struct Character* get_character(struct MarioState* m) {
 
 static s32 get_character_sound(struct MarioState* m, enum CharacterSound characterSound) {
     if (m == NULL || m->marioObj == NULL) { return 0; }
-	
+
     s32 override = 0;
     if (smlua_call_event_hooks_mario_character_sound_param_ret_int(HOOK_CHARACTER_SOUND, m, characterSound, &override)) {
         return override;
@@ -1611,7 +1611,7 @@ void update_character_anim_offset(struct MarioState* m) {
 
 s32 get_character_anim(struct MarioState* m, enum CharacterAnimID characterAnim) {
     if (m == NULL || m->marioObj == NULL) { return 0; }
-	
+
     struct Character* character = ((m == NULL || m->character == NULL) ? &gCharacters[CT_MARIO] : m->character);
     if (!character || characterAnim < 0 || characterAnim >= CHAR_ANIM_MAX) { return 0; }
     return character->anims[characterAnim];

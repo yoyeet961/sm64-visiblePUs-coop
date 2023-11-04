@@ -25,6 +25,7 @@
 #include "../platform.h"
 #include "../configfile.h"
 #include "../fs/fs.h"
+#include "../pc_main.h"
 
 #include "macros.h"
 
@@ -1895,6 +1896,8 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, co
     gfx_rapi->init();
 
     gfx_cc_precomp();
+
+    gGfxInited = true;
 }
 
 #ifdef EXTERNAL_DATA

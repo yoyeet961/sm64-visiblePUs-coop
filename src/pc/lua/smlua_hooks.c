@@ -1,3 +1,6 @@
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
 #include "smlua.h"
 #include "sm64.h"
 #include "behavior_commands.h"
@@ -7,6 +10,10 @@
 #include "pc/crash_handler.h"
 #include "src/game/hud.h"
 #include "pc/debug_context.h"
+#include "pc/network/network.h"
+#include "pc/network/network_player.h"
+#include "pc/network/socket/socket.h"
+#include "pc/chat_commands.h"
 #include "pc/pc_main.h"
 
 #if defined(DEVELOPMENT)
@@ -1308,7 +1315,7 @@ struct LuaHookedChatCommand {
     struct Mod* mod;
 };
 
-#define MAX_HOOKED_CHAT_COMMANDS 64
+#define MAX_HOOKED_CHAT_COMMANDS 512
 
 static struct LuaHookedChatCommand sHookedChatCommands[MAX_HOOKED_CHAT_COMMANDS] = { 0 };
 static int sHookedChatCommandsCount = 0;
@@ -1445,6 +1452,184 @@ void smlua_display_chat_commands(void) {
     }
 }
 
+char* remove_color_codes(const char* str) {
+    char* result = strdup(str);
+    char* startColor;
+    while ((startColor = strstr(result, "\\#"))) {
+        char* endColor = strstr(startColor, "\\");
+        if (endColor) {
+            memmove(startColor, endColor + 1, strlen(endColor));
+        } else {
+            break;
+        }
+    }
+    return result;
+}
+
+bool is_valid_subcommand(const char* start, const char* end) {
+    for (const char* ptr = start; ptr < end; ptr++) {
+        if (isspace(*ptr) || *ptr == '\0') {
+            return false;
+        }
+    }
+    return true;
+}
+
+s32 sort_alphabetically(const void *a, const void *b) {
+    const char* strA = *(const char**)a;
+    const char* strB = *(const char**)b;
+
+    s32 cmpResult = strcasecmp(strA, strB);
+
+    if (cmpResult == 0) {
+        return strcmp(strA, strB);
+    }
+
+    return cmpResult;
+}
+
+char** smlua_get_chat_player_list(void) {
+    char* playerNames[MAX_PLAYERS] = { NULL }; 
+    s32 playerCount = 0;
+
+    for (s32 i = 0; i < MAX_PLAYERS; i++) {
+        struct NetworkPlayer* np = &gNetworkPlayers[i];
+        if (!np->connected) continue;
+
+        bool isDuplicate = false;
+        for (s32 j = 0; j < playerCount; j++) {
+            if (strcmp(playerNames[j], np->name) == 0) {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (!isDuplicate) {
+            playerNames[playerCount++] = np->name;
+        }
+    }
+
+    qsort(playerNames, playerCount, sizeof(char*), sort_alphabetically);
+
+    char** sortedPlayers = (char**) malloc((playerCount + 1) * sizeof(char*));
+    for (s32 i = 0; i < playerCount; i++) {
+        sortedPlayers[i] = strdup(playerNames[i]);
+    }
+    sortedPlayers[playerCount] = NULL;
+    return sortedPlayers;
+}
+
+
+char** smlua_get_chat_maincommands_list(void) {
+    #if defined(DEVELOPMENT)
+        char* additionalCmds[] = {"players", "kick", "ban", "permban", "moderator", "confirm", "help", "?", "warp", "lua", "luaf"};
+        s32 additionalCmdsCount = 11;
+    #else
+        char* additionalCmds[] = {"players", "kick", "ban", "permban", "moderator", "confirm", "help", "?"};
+        s32 additionalCmdsCount = 8;
+    #endif
+
+    char** commands = (char**) malloc((sHookedChatCommandsCount + additionalCmdsCount + 1) * sizeof(char*));
+
+    for (s32 i = 0; i < sHookedChatCommandsCount; i++) {
+        struct LuaHookedChatCommand* hook = &sHookedChatCommands[i];
+        commands[i] = strdup(hook->command);
+    }
+
+    for (s32 i = 0; i < additionalCmdsCount; i++) {
+        commands[sHookedChatCommandsCount + i] = strdup(additionalCmds[i]);
+    }
+
+    commands[sHookedChatCommandsCount + additionalCmdsCount] = NULL;
+
+    qsort(commands, sHookedChatCommandsCount + additionalCmdsCount, sizeof(char*), sort_alphabetically);
+
+    return commands;
+}
+
+char** smlua_get_chat_subcommands_list(const char* maincommand) {
+    for (s32 i = 0; i < sHookedChatCommandsCount; i++) {
+        struct LuaHookedChatCommand* hook = &sHookedChatCommands[i];
+        if (strcmp(hook->command, maincommand) == 0) {
+            char* noColorsDesc = remove_color_codes(hook->description);
+            char* startSubcommands = strstr(noColorsDesc, "[");
+            char* endSubcommands = strstr(noColorsDesc, "]");
+
+            if (startSubcommands && endSubcommands && is_valid_subcommand(startSubcommands + 1, endSubcommands)) {
+                *endSubcommands = '\0';
+                char* subcommandsStr = strdup(startSubcommands + 1);
+
+                s32 count = 1;
+                for (s32 j = 0; subcommandsStr[j]; j++) {
+                    if (subcommandsStr[j] == '|') count++;
+                }
+
+                char** subcommands = (char**) malloc((count + 1) * sizeof(char*));
+                char* token = strtok(subcommandsStr, "|");
+                s32 index = 0;
+                while (token) {
+                    subcommands[index++] = strdup(token);
+                    token = strtok(NULL, "|");
+                }
+                subcommands[index] = NULL;
+
+                qsort(subcommands, count, sizeof(char*), sort_alphabetically);
+
+                free(noColorsDesc);
+                free(subcommandsStr);
+                return subcommands;
+            }
+            free(noColorsDesc);
+        }
+    }
+    return NULL;
+}
+
+bool smlua_maincommand_exists(const char* maincommand) {
+    char** commands = smlua_get_chat_maincommands_list();
+    bool result = false;
+
+    s32 i = 0;
+    while (commands[i] != NULL) {
+        if (strcmp(commands[i], maincommand) == 0) {
+            result = true;
+            break;
+        }
+        i++;
+    }
+
+    for (s32 j = 0; commands[j] != NULL; j++) {
+        free(commands[j]);
+    }
+    free(commands);
+    
+    return result;
+}
+
+bool smlua_subcommand_exists(const char* maincommand, const char* subcommand) {
+    char** subcommands = smlua_get_chat_subcommands_list(maincommand);
+
+    if (subcommands == NULL) {
+        return false;
+    }
+
+    bool result = false;
+    s32 i = 0;
+    while (subcommands[i] != NULL) {
+        if (strcmp(subcommands[i], subcommand) == 0) {
+            result = true;
+            break;
+        }
+        i++;
+    }
+
+    for (s32 j = 0; subcommands[j] != NULL; j++) {
+        free(subcommands[j]);
+    }
+    free(subcommands);
+    
+    return result;
+}
 
   //////////////////////////////
  // hooked sync table change //

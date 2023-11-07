@@ -313,8 +313,6 @@ void *main_game_init(void*) {
     bassh_init();
     network_player_init();
 
-    thread5_game_loop(NULL);
-
 #ifdef EXTERNAL_DATA
     // precache data if needed
     if (configPrecacheRes) {
@@ -347,6 +345,9 @@ int main(int argc, char *argv[]) {
         main_game_init(NULL); // Failsafe incase threading doesn't work
     }
     pthread_mutex_destroy(&gLoadingThreadMutex);
+
+    // initialize sm64 data and controllers
+    thread5_game_loop(NULL);
 
     // Initialize djui
     djui_init();

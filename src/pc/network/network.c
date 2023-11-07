@@ -639,7 +639,6 @@ void network_shutdown(bool sendLeaving, bool exiting, bool popup, bool reconnect
     gLightingColor[2] = 255;
     gOverrideBackground = -1;
     gOverrideEnvFx = -1;
-    gDjuiRenderBehindHud = false;
     gRomhackCameraAllowCentering = TRUE;
     gRomhackCameraAllowDpad = FALSE;
     camera_reset_overrides();

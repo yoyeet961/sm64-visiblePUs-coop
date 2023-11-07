@@ -3198,7 +3198,8 @@
 | HOOK_JOINED_GAME | 31 |
 | HOOK_ON_OBJECT_ANIM_UPDATE | 32 |
 | HOOK_ON_DIALOG | 33 |
-| HOOK_MAX | 34 |
+| HOOK_ON_HUD_RENDER_BEHIND | 34 |
+| HOOK_MAX | 35 |
 
 [:arrow_up_small:](#)
 

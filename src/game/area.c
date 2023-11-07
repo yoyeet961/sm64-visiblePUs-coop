@@ -442,11 +442,11 @@ void render_game(void) {
         gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, BORDER_HEIGHT, SCREEN_WIDTH,
                       SCREEN_HEIGHT - BORDER_HEIGHT);
 
-        if (!gDjuiDisabled && gDjuiRenderBehindHud) {
+        if (!gDjuiDisabled) {
             djui_reset_hud_params();
             create_dl_ortho_matrix();
             djui_gfx_displaylist_begin();
-            smlua_call_event_hooks_with_reset_func(HOOK_ON_HUD_RENDER, djui_reset_hud_params);
+            smlua_call_event_on_hud_render_behind(djui_reset_hud_params);
             djui_gfx_displaylist_end();
         }
         render_hud();

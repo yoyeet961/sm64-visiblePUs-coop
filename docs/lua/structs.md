@@ -1381,6 +1381,7 @@
 | isDirectory | `boolean` | read-only |
 | name | `string` | read-only |
 | relativePath | `string` | read-only |
+| renderBehindHud | `boolean` | read-only |
 | selectable | `boolean` | read-only |
 
 [:arrow_up_small:](#)

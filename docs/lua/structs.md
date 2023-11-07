@@ -2436,7 +2436,6 @@
 | Field | Type | Access |
 | ----- | ---- | ------ |
 | bubbleDeath | `integer` |  |
-| enableCheats | `integer` |  |
 | enablePlayerList | `integer` |  |
 | enablePlayersInLevelDisplay | `integer` |  |
 | headlessServer | `integer` |  |

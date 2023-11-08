@@ -8999,7 +8999,10 @@ HOOK_ON_OBJECT_ANIM_UPDATE = 32
 HOOK_ON_DIALOG = 33
 
 --- @type LuaHookedEventType
-HOOK_MAX = 34
+HOOK_ON_HUD_RENDER_BEHIND = 34
+
+--- @type LuaHookedEventType
+HOOK_MAX = 35
 
 --- @class HudDisplayFlags
 

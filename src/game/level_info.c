@@ -202,12 +202,12 @@ const char *get_level_name_ascii(s16 courseNum, s16 levelNum, s16 areaIndex, s16
         }
     }
 
-    if (gReplacedActNameTable[courseNum]->modIndex != -1) {
+    if (courseNum >= 0 && courseNum <= COURSE_MAX && gReplacedActNameTable[courseNum]->modIndex != -1) {
         snprintf(output, 256, "%s", gReplacedActNameTable[courseNum]->name);
     }
 
     else if (!hasCustomName) {
-        if (COURSE_IS_VALID_COURSE(courseNum)) {
+        if (COURSE_IS_MAIN_COURSE(courseNum)) {
             void **courseNameTbl = get_course_name_table();
             const u8 *courseName = segmented_to_virtual(courseNameTbl[courseNum - COURSE_BOB]);
             convert_string_sm64_to_ascii(output, courseName + 3);
@@ -261,15 +261,18 @@ const char *get_level_name(s16 courseNum, s16 levelNum, s16 areaIndex) {
 const char *get_star_name_ascii(s16 courseNum, s16 starNum, s16 charCase) {
     static char output[256];
 
-    if (gReplacedActNameTable[courseNum]->actName && gReplacedActNameTable[courseNum]->actName[starNum - 1].isModified) {
-        snprintf(output, 256, "%s", gReplacedActNameTable[courseNum]->actName[starNum - 1].name);
+    s16 starIndex = starNum - 1;
+    if (starIndex >= 0 && starIndex < MAX_ACTS &&
+        courseNum >= 0 && courseNum < COURSE_END &&
+        gReplacedActNameTable[courseNum]->actName && gReplacedActNameTable[courseNum]->actName[starIndex].isModified) {
+        snprintf(output, 256, "%s", gReplacedActNameTable[courseNum]->actName[starIndex].name);
     }
 
     // Main courses: BOB to RR
     else if (COURSE_IS_MAIN_COURSE(courseNum)) {
-        if (starNum >= 1 && starNum <= 6) {
+        if (starIndex >= 0 && starIndex < MAX_ACTS) {
             void **actNameTable = get_act_name_table();
-            const u8 *starName = segmented_to_virtual(actNameTable[(courseNum - COURSE_BOB) * 6 + (starNum - 1)]);
+            const u8 *starName = segmented_to_virtual(actNameTable[(courseNum - COURSE_BOB) * MAX_ACTS + starIndex]);
             convert_string_sm64_to_ascii(output, starName);
             charCase = MIN(charCase, 0); // Don't need to capitalize vanilla act names
         } else if (starNum == 7) {

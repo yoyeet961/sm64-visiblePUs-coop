@@ -3,6 +3,7 @@
 #include "djui.h"
 #include "djui_panel_menu.h"
 #include "djui_console.h"
+#include "pc/pc_main.h"
 
 #define MAX_CONSOLE_MESSAGES 500
 
@@ -15,6 +16,12 @@ void djui_console_toggle(void) {
     if (gDjuiConsole == NULL) { return; }
     gDjuiConsoleFocus = !gDjuiConsoleFocus;
     djui_base_set_visible(&gDjuiConsole->panel->base, gDjuiConsoleFocus);
+
+    u32 windowWidth, windowHeight;
+    wm_api->get_dimensions(&windowWidth, &windowHeight);
+    f32 scaledHeight = (windowHeight * 0.95f) / djui_gfx_get_scale();
+
+    djui_base_set_size(&gDjuiConsole->panel->base, 1000, MIN(scaledHeight, 1000));
 
     if (gDjuiConsoleFocus) {
         if (gDjuiChatBoxFocus) { djui_chat_box_toggle(); }
@@ -103,12 +110,12 @@ struct DjuiConsole* djui_console_create(void) {
 
     struct DjuiConsole* console = calloc(1, sizeof(struct DjuiConsole));
     struct DjuiThreePanel* panel = djui_panel_menu_create(DLANG(CONSOLE, CONSOLE));
-    djui_three_panel_set_body_size(panel, 750);
+    djui_three_panel_set_body_size(panel, 1000);
     console->panel = panel;
 
     djui_base_set_alignment(&panel->base, DJUI_HALIGN_CENTER, DJUI_VALIGN_CENTER);
     djui_base_set_size_type(&panel->base, DJUI_SVT_ABSOLUTE, DJUI_SVT_ABSOLUTE);
-    djui_base_set_size(&panel->base, 850, 750 + (32 + 16) + 32 +  32);
+    djui_base_set_size(&panel->base, 850, 1000);
     djui_base_set_visible(&panel->base, false);
 
     djui_interactable_create(&panel->base, NULL);

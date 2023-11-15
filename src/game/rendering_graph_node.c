@@ -205,6 +205,24 @@ f32 gOverrideFOV = 0;
 f32 gOverrideNear = 0;
 f32 gOverrideFar = 0;
 
+bool obj_is_in_PU(Vec3f pos) {
+    if (pos[0] >= 32768.0f || pos[1] >= 32768.0f || pos[2] >= 32768.0f || pos[0] <= -32768.0f || pos[1] <= -32768.0f || pos[2] <= -32768.0f) {
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
+}
+
+bool obj_struct_is_in_PU(struct Object* o) {
+    if (o->oPosX >= 32768.0f || o->oPosY >= 32768.0f || o->oPosZ >= 32768.0f || o->oPosX <= -32768.0f || o->oPosY <= -32768.0f || o->oPosZ <= -32768.0f) {
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
+}
+
 void patch_mtx_before(void) {
     gMtxTblSize = 0;
 
@@ -1849,7 +1867,7 @@ static s32 obj_is_in_view(struct GraphNodeObject *node, Mat4 matrix) {
 
     if (node->node.flags & GRAPH_RENDER_INVISIBLE) {
         return FALSE;
-    } else if (node->skipInViewCheck) {
+    } else if (node->skipInViewCheck || (node->pos[0] >= 32768) || (node->pos[1] >= 32768) || (node->pos[2] >= 32768) || (node->pos[0] <= -32768) || (node->pos[1] <= -32768) || (node->pos[2] <= -32768)) {
         return TRUE;
     }
 
@@ -1915,8 +1933,8 @@ static void geo_process_object(struct Object *node) {
         node->header.gfx.skipInViewCheck = true;
     }
 
-    s32 puX, puY, puZ;
-    s32 objPU_X, objPU_Y, objPU_Z;
+    f32 puX, puY, puZ;
+    f32 objPU_X, objPU_Y, objPU_Z;
     struct MarioState *m = &gMarioStates[0];
     if (m->pos[0] >= 0) {
         puX = floor((8192 + m->pos[0]) / 65536);
@@ -1972,6 +1990,33 @@ static void geo_process_object(struct Object *node) {
     } else {
         objPU_Z = ceil((-8192 + node->oPosZ) / 65536);
     }
+    objPU_X = truncf(objPU_X);
+    objPU_Y = truncf(objPU_Y);
+    objPU_Z = truncf(objPU_Z);
+    puX = truncf(puX);
+    puY = truncf(puY);
+    puZ = truncf(puZ);
+    if (objPU_X < 0 && objPU_X > -1) {
+        objPU_X = 0;
+    }
+    if (objPU_Y < 0 && objPU_Y > -1) {
+        objPU_Y = 0;
+    }
+    if (objPU_Z < 0 && objPU_Z > -1) {
+        objPU_Z = 0;
+    }
+    if (puX < 0 && puX > -1) {
+        puX = 0;
+    }
+    if (puY < 0 && puY > -1) {
+        puY = 0;
+    }
+    if (puZ < 0 && puZ > -1) {
+        puZ = 0;
+    }
+    if (puZ < 0 && puZ > -1) {
+        puZ = 0;
+    }
     if ((objPU_X == puX) && (objPU_Y == puY) && (objPU_Z == puZ)) {
         if ((node->header.gfx.pos[0] >= 32768) && (gMarioStates[0].pos[0] >= 32768)) {
             node->header.gfx.skipInViewCheck = true;
@@ -1983,7 +2028,7 @@ static void geo_process_object(struct Object *node) {
                 node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
             }
             //oldThrowMatrix = node->header.gfx.throwMatrix;
-            node->header.gfx.throwMatrix = NULL;
+            if (node != gMarioState->marioObj) { node->header.gfx.throwMatrix = NULL; }
             // node->header.gfx.throwMatrix[0][0] = fmodf(node->header.gfx.throwMatrix[0][0], 65536.0f);
             // if (node->header.gfx.throwMatrix[0][0] > 32768.0f) {
             //     node->header.gfx.throwMatrix[0][0] = node->header.gfx.throwMatrix[0][0] - 65536.0f;
@@ -2016,7 +2061,7 @@ static void geo_process_object(struct Object *node) {
                 node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
             }
             //oldThrowMatrix = node->header.gfx.throwMatrix;
-            node->header.gfx.throwMatrix = NULL;
+            if (node != gMarioState->marioObj) { node->header.gfx.throwMatrix = NULL; }
             // node->header.gfx.throwMatrix[0][1] = fmodf(node->header.gfx.throwMatrix[0][1], 65536.0f);
             // if (node->header.gfx.throwMatrix[0][1] > 32768.0f) {
             //     node->header.gfx.throwMatrix[0][1] = node->header.gfx.throwMatrix[0][1] - 65536.0f;
@@ -2049,7 +2094,7 @@ static void geo_process_object(struct Object *node) {
                 node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
             }
             //oldThrowMatrix = node->header.gfx.throwMatrix;
-            node->header.gfx.throwMatrix = NULL;
+            if (node != gMarioState->marioObj) { node->header.gfx.throwMatrix = NULL; }
             // node->header.gfx.throwMatrix[0][2] = fmodf(node->header.gfx.throwMatrix[0][2], 65536.0f);
             // if (node->header.gfx.throwMatrix[0][2] > 32768.0f) {
             //     node->header.gfx.throwMatrix[0][2] = node->header.gfx.throwMatrix[0][2] - 65536.0f;
@@ -2082,7 +2127,7 @@ static void geo_process_object(struct Object *node) {
                 node->header.gfx.pos[0] = node->header.gfx.pos[0] + 65536.0f;
             }
             //oldThrowMatrix = node->header.gfx.throwMatrix;
-            node->header.gfx.throwMatrix = NULL;
+            if (node != gMarioState->marioObj) { node->header.gfx.throwMatrix = NULL; }
             // node->header.gfx.throwMatrix[0][0] = fmodf(node->header.gfx.throwMatrix[0][0], 65536.0f);
             // if (node->header.gfx.throwMatrix[0][0] > 32768.0f) {
             //     node->header.gfx.throwMatrix[0][0] = node->header.gfx.throwMatrix[0][0] - 65536.0f;
@@ -2115,7 +2160,7 @@ static void geo_process_object(struct Object *node) {
                 node->header.gfx.pos[1] = node->header.gfx.pos[1] + 65536.0f;
             }
             //oldThrowMatrix = node->header.gfx.throwMatrix;
-            node->header.gfx.throwMatrix = NULL;
+            if (node != gMarioState->marioObj) { node->header.gfx.throwMatrix = NULL; }
             // node->header.gfx.throwMatrix[0][1] = fmodf(node->header.gfx.throwMatrix[0][1], 65536.0f);
             // if (node->header.gfx.throwMatrix[0][1] > 32768.0f) {
             //     node->header.gfx.throwMatrix[0][1] = node->header.gfx.throwMatrix[0][1] - 65536.0f;
@@ -2148,7 +2193,7 @@ static void geo_process_object(struct Object *node) {
                 node->header.gfx.pos[2] = node->header.gfx.pos[2] + 65536.0f;
             }
             //oldThrowMatrix = node->header.gfx.throwMatrix;
-            node->header.gfx.throwMatrix = NULL;
+            if (node != gMarioState->marioObj) { node->header.gfx.throwMatrix = NULL; }
             // node->header.gfx.throwMatrix[0][2] = fmodf(node->header.gfx.throwMatrix[0][2], 65536.0f);
             // if (node->header.gfx.throwMatrix[0][2] > 32768.0f) {
             //     node->header.gfx.throwMatrix[0][2] = node->header.gfx.throwMatrix[0][2] - 65536.0f;
@@ -2257,7 +2302,7 @@ static void geo_process_object(struct Object *node) {
     }
 
     if (node->header.gfx.areaIndex == gCurGraphNodeRoot->areaIndex) {
-        if (node->header.gfx.throwMatrix != NULL) {
+        if (node->header.gfx.throwMatrix != NULL && !(obj_struct_is_in_PU(node))) {
 
             mtxf_mul(gMatStack[gMatStackIndex + 1], *node->header.gfx.throwMatrix,
                      gMatStack[gMatStackIndex]);
@@ -2401,17 +2446,37 @@ static void geo_process_object(struct Object *node) {
     // }
         //if ((objPU_X == puX) && (objPU_Y == puY) && (objPU_Z == puZ)) {
             //if (gCamera) {
-            if ((node->oPosX >= 32768) || (node->oPosX <= -32768) || (node->oPosY >= 32768) || (node->oPosY <= -32768) || (node->oPosZ >= 32768) || (node->oPosZ <= -32768)) {
-                Mat4 matrix[4];
+            // if ((node->oPosX >= 32768) || (node->oPosX <= -32768) || (node->oPosY >= 32768) || (node->oPosY <= -32768) || (node->oPosZ >= 32768) || (node->oPosZ <= -32768)) {
+            if (objPU_X == puX && objPU_Y == puY && objPU_Z == puZ) {
+                // Mat4 matrix[64];
                 Vec3f objPos;
                 objPos[0] = node->oPosX;
                 objPos[1] = node->oPosY;
                 objPos[2] = node->oPosZ;
-                s16 objAngle[3];
-                objAngle[0] = node->header.gfx.angle[0];
-                objAngle[1] = node->header.gfx.angle[1];
-                objAngle[2] = node->header.gfx.angle[2];
+                // s16 objAngle[3];
+                // objAngle[0] = node->header.gfx.angle[0];
+                // objAngle[1] = node->header.gfx.angle[1];
+                // objAngle[2] = node->header.gfx.angle[2];
+                // Vec3f rotated;
+                Vec3f dist;
+                dist[0] = fabsf(objPos[0] - gCamera->pos[0]);
+                dist[1] = fabsf(dist[1] - gCamera->pos[1]);
+                dist[2] = fabsf(objPos[2] - gCamera->pos[2]);
+                
+
+                // vec3f_rotate_zxy(rotated, )
+                // Vec3f *cameraPos[3];
+                // // if (cameraPos != NULL) {
+                // //     // Copy the values from gCamera->pos to cameraPos
+                // //     memcpy(cameraPos, gCamera->pos, 3 * sizeof(f32));
+                // // } else {
+                // //     // Handle the case when memory allocation fails
+                // //     vec3f_set(cameraPos, 0.0f, 0.0f, 0.0f);
+                // // }
                 //Mat4 newMatrix[4];
+                // f32* cameraPosX = &gCamera->pos[0];
+                // f32* cameraPosY = &gCamera->pos[1];
+                // f32* cameraPosZ = &gCamera->pos[2];
             //     double temp;
             //     temp = sqrt((objPos[0] - gMarioState->pos[0]) * (objPos[0] - gMarioState->pos[0]) +
             // (objPos[1] - gMarioState->pos[1]) * (objPos[1] - gMarioState->pos[1]) +
@@ -2419,7 +2484,16 @@ static void geo_process_object(struct Object *node) {
             //     f32 dist = temp;
             //     Vec3f newPos[3];
             //     vec3f_set_dist_and_angle(objPos, newPos, dist, objAngle[2], objAngle[1]);
-                mtxf_rotate_zxy_and_translate(matrix, objPos, objAngle);
+                //mtxf_rotate_zxy_and_translate(matrix, objPos, objAngle);
+                // node->header.gfx.cameraToObject[0] = matrix[3][0] - gCamera->pos[0];
+                // node->header.gfx.cameraToObject[1] = matrix[3][1] - gCamera->pos[1];
+                // node->header.gfx.cameraToObject[2] = matrix[3][2] - gCamera->pos[2];
+                // node->header.gfx.cameraToObject[0] = matrix[3][0] - (int)round((f32)gCamera->pos[0]);
+                // node->header.gfx.cameraToObject[1] = matrix[3][1] - round((f32)gCamera->pos[1]);
+                // node->header.gfx.cameraToObject[2] = matrix[3][2] - round((f32)gCamera->pos[2]);
+                // node->header.gfx.cameraToObject[0] = matrix[3][0]/* - cameraPosX+(objPU_X*65536)*/;
+                // node->header.gfx.cameraToObject[1] = matrix[3][1]/* - cameraPosY+(objPU_Y*65536)*/;
+                // node->header.gfx.cameraToObject[2] = matrix[3][2]/* - cameraPosZ+(objPU_Z*65536)*/;
                 // mtxf_mul(newMatrix, matrix, newMatrix);
                 // mtxf_scale_vec3f(newMatrix, newMatrix, node->header.gfx.scale);
                 // Vec3f matrix_soundDecreased;
@@ -2430,7 +2504,7 @@ static void geo_process_object(struct Object *node) {
                 // node->header.gfx.cameraToObject[1] = matrix[3][1];
                 // node->header.gfx.cameraToObject[2] = matrix[3][2];
                 //vec3f_sub(matrix[3], gCamera->pos);
-                vec3f_copy(node->header.gfx.cameraToObject, matrix[3]);
+                vec3f_copy(node->header.gfx.cameraToObject, dist);
             }
         }
         //}

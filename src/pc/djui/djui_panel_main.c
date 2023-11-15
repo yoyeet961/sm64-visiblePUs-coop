@@ -17,7 +17,7 @@ static void nothing() {
     return;
 }
 static void djui_panel_main_credits(struct DjuiBase* caller) {
-    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#00b3ff\\CREDITS\n\n\\#ff9900\\Peter Fedak\n\\#0000ff\\PlayerPro342\n\\#cc00cc\\Isaac");
+    struct DjuiThreePanel* panel = djui_panel_menu_create("\\#00b3ff\\CREDITS\n\n\\#ff9900\\Peter Fedak\n\\#cc00cc\\Isaac\n\\#0000ff\\PlayerPro342");
     {
     struct DjuiBase* body = djui_three_panel_get_body(panel);
     {
@@ -52,7 +52,7 @@ void djui_panel_main_create(struct DjuiBase* caller) {
         }
 
         //char* version = get_version_local();
-        struct DjuiText* footer = djui_text_create(&panel->base, "beta 35\nvisible PUs version stable 12.1");
+        struct DjuiText* footer = djui_text_create(&panel->base, "beta 35\nvisible PUs version stable 13");
         djui_base_set_size_type(&footer->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
         djui_base_set_size(&footer->base, 1.0f, 1.0f);
         djui_base_set_color(&footer->base, 50, 50, 50, 255);

@@ -3983,6 +3983,30 @@ TIMER_CONTROL_START = 1
 TIMER_CONTROL_STOP = 2
 
 --- @type integer
+WARP_NODE_CREDITS_END = 0xFA
+
+--- @type integer
+WARP_NODE_CREDITS_MIN = 0xF8
+
+--- @type integer
+WARP_NODE_CREDITS_NEXT = 0xF9
+
+--- @type integer
+WARP_NODE_CREDITS_START = 0xF8
+
+--- @type integer
+WARP_NODE_DEATH = 0xF1
+
+--- @type integer
+WARP_NODE_F0 = 0xF0
+
+--- @type integer
+WARP_NODE_F2 = 0xF2
+
+--- @type integer
+WARP_NODE_WARP_FLOOR = 0xF3
+
+--- @type integer
 WARP_OP_CREDITS_END = 0x15
 
 --- @type integer

@@ -37,6 +37,9 @@ extern f32 gOverrideFOV;
 extern f32 gOverrideNear;
 extern f32 gOverrideFar;
 
+bool obj_is_in_PU(Vec3f pos);
+bool obj_struct_is_in_PU(struct Object *o);
+
 void geo_process_node_and_siblings(struct GraphNode *firstNode);
 void geo_process_root(struct GraphNodeRoot *node, Vp *b, Vp *c, s32 clearColor);
 void interpolate_vectors(Vec3f res, Vec3f a, Vec3f b);

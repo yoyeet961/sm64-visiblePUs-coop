@@ -21,6 +21,8 @@
 #include "pc/network/network.h"
 #include "pc/lua/smlua_hooks.h"
 
+#include "game/rendering_graph_node.h"
+
 /**
  * Partitions for course and object surfaces. The arrays represent
  * the 16x16 cells that each level is split into.

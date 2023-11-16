@@ -24,7 +24,7 @@ static const Lights1 wario_cap_seg3_lights_0301CF38 = gdSPDefLights1(
 #define wario_cap_seg3_texture_0301F750 mario_cap_seg3_texture_0301F750
 #define wario_cap_seg3_texture_03020750 mario_cap_seg3_texture_03020750
 #define wario_cap_seg3_texture_03021750 mario_cap_seg3_texture_03021750
-#define wario_cap_texture_cap_inside    mario_cap_texture_cap_inside
+#define wario_cap_texture_cap_inside    mario_texture_cap_inside
 
 // 0x0301DF50
 ALIGNED8 const Texture wario_cap_seg3_texture_0301DF50[] = {

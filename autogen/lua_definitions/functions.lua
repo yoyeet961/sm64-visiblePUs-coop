@@ -4197,6 +4197,13 @@ function level_trigger_warp(m, warpOp)
     -- ...
 end
 
+--- @param arg0 integer
+--- @param levelNum integer
+--- @return integer
+function lvl_set_current_level(arg0, levelNum)
+    -- ...
+end
+
 --- @param arg integer
 --- @return nil
 function warp_special(arg)

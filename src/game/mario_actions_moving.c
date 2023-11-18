@@ -96,12 +96,12 @@ void align_with_floor(struct MarioState *m) {
     if (!m) { return; }
     m->pos[1] = m->floorHeight + get_character_anim_offset(m);
     mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerIndex], m->pos, m->faceAngle[1], 40.0f);
-    // if ((m->pos[0] > 32768) || (m->pos[1] > 32768) || (m->pos[2] > 32768) || (m->pos[0] < -32768) || (m->pos[1] < -32768) || (m->pos[2] < -32768)) {
-    //     return;
-    // }
-    // else {
+    if ((m->pos[0] > 32768) || (m->pos[1] > 32768) || (m->pos[2] > 32768) || (m->pos[0] < -32768) || (m->pos[1] < -32768) || (m->pos[2] < -32768)) {
+        return;
+    }
+    else {
         m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->playerIndex];
-    //}
+    }
 }
 
 s32 begin_walking_action(struct MarioState *m, f32 forwardVel, u32 action, u32 actionArg) {

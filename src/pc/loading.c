@@ -13,7 +13,6 @@ struct LoadingSegment gCurrLoadingSegment = { "", 0 };
 struct LoadingScreen {
     struct DjuiBase base;
     struct DjuiText* splashText;
-    struct DjuiText* loadingText;
     struct DjuiText* loadingDesc;
     struct DjuiProgressBar *loadingBar;
 };
@@ -67,41 +66,40 @@ static bool loading_screen_on_render(struct DjuiBase* base) {
     windowWidth /= scale;
     windowHeight /= scale;
 
+    f32 loadingDescY1 = windowHeight * 0.5f - sLoading->loadingDesc->base.height.value * 0.5f;
+    f32 loadingDescY2 = windowHeight * 0.5f + sLoading->loadingDesc->base.height.value * 0.5f;
+
     // Fill the screen
     djui_base_set_size(base, windowWidth, windowHeight);
 
     // Splash text
-    djui_base_set_location(&sLoading->splashText->base, (windowWidth / 2) - 416, 0);
-
-    {
-        // Loading... text
-        char* loadingStr = DLANG(LOADING_SCREEN, LOADING);
-        char tmp[20] = "";
-        switch ((u8) floor(clock_elapsed()) % 3) {
-            case 0:  snprintf(tmp, 20, "%s...", loadingStr); break;
-            case 1:  snprintf(tmp, 20, "%s.",   loadingStr); break;
-            default: snprintf(tmp, 20, "%s..",  loadingStr); break;
-        }
-        djui_text_set_text(sLoading->loadingText, tmp);
-        djui_base_set_visible(&sLoading->loadingText->base, sLoading->loadingText->base.y.value + 50 < sLoading->loadingDesc->base.y.value);
-    }
+    djui_base_set_location(&sLoading->splashText->base, 0, loadingDescY1 - sLoading->splashText->base.height.value);
 
     {
         // Loading text description
         char buffer[256] = "";
-        if (strlen(gCurrLoadingSegment.str) > 0) {
+        u32 length = strlen(gCurrLoadingSegment.str);
+        if (length > 0) {
             if (gCurrLoadingSegment.percentage > 0) {
-                snprintf(buffer, 256, "%s... %d%%", gCurrLoadingSegment.str, (u8) floor(gCurrLoadingSegment.percentage * 100));
+                snprintf(buffer, 256, "%s\n\\#C8C8C8\\%d%%", gCurrLoadingSegment.str, (u8) floor(gCurrLoadingSegment.percentage * 100));
             } else {
                 snprintf(buffer, 256, "%s...", gCurrLoadingSegment.str);
             }
+
+            // swap around the backslashes
+            bool inColor = false;
+            for (u32 i = 0; i < length; i++) {
+                if (buffer[i] == '\\' && buffer[MIN(i+1,length)] == '#') { inColor = true; }
+                if (buffer[i] == '\\' && !inColor) { buffer[i] = '/'; }
+                if (buffer[i] == '\\' && inColor && buffer[MIN(i+1,length)] != '#') { inColor = false; }
+            }
         }
         djui_text_set_text(sLoading->loadingDesc, buffer);
-        djui_base_set_location(&sLoading->loadingDesc->base, 0, windowHeight - 250);
+        djui_base_set_location(&sLoading->loadingDesc->base, 0, loadingDescY1);
     }
 
     // Loading bar
-    djui_base_set_location(&sLoading->loadingBar->base, windowWidth / 4, windowHeight - 100);
+    djui_base_set_location(&sLoading->loadingBar->base, windowWidth / 4, loadingDescY2 + 64);
     djui_base_set_visible(&sLoading->loadingBar->base, gCurrLoadingSegment.percentage > 0 && strlen(gCurrLoadingSegment.str) > 0);
 
     djui_base_compute(base);
@@ -120,43 +118,38 @@ static void loading_screen_destroy(struct DjuiBase* base) {
 void render_loading_screen() {
     struct LoadingScreen* load = malloc(sizeof(struct LoadingScreen));
     struct DjuiBase* base = &load->base;
+    f32 nextY = 0;
 
     djui_base_init(NULL, base, loading_screen_on_render, loading_screen_destroy);
 
     {
         // Splash text
-        struct DjuiText* splashDjuiText = djui_text_create(base, "\\#ff0800\\SM\\#1be700\\64\\#00b3ff\\EX\\#ffef00\\COOP");
+        struct DjuiText* splashDjuiText = djui_text_create(base, "\\#ff0800\\SM\\#1be700\\64\\#00b3ff\\EX\n\\#ffef00\\COOP");
+        djui_base_set_location_type(&splashDjuiText->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
+        djui_base_set_location(&splashDjuiText->base, 0, 0);
         djui_text_set_font(splashDjuiText, gDjuiFonts[1]);
-        djui_text_set_font_scale(splashDjuiText, gDjuiFonts[1]->defaultFontScale * 4);
-        djui_text_set_alignment(splashDjuiText, DJUI_HALIGN_CENTER, DJUI_VALIGN_TOP);
-        djui_base_set_size(&splashDjuiText->base, 800, 800);
+        djui_text_set_font_scale(splashDjuiText, gDjuiFonts[1]->defaultFontScale * 1);
+        djui_text_set_alignment(splashDjuiText, DJUI_HALIGN_CENTER, DJUI_VALIGN_CENTER);
+        djui_base_set_size_type(&splashDjuiText->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
+        djui_base_set_size(&splashDjuiText->base, 1.0f, gDjuiFonts[1]->defaultFontScale * 3.0f);
+        nextY += gDjuiFonts[1]->defaultFontScale * 3.0f;
 
         load->splashText = splashDjuiText;
     }
 
     {
-        // "Loading..." text
-        struct DjuiText *text = djui_text_create(base, "");
-        djui_base_set_size_type(&text->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
-        djui_base_set_size(&text->base, 1.0f, 32 * 4);
-        djui_base_set_color(&text->base, 200, 200, 200, 255);
-        djui_base_set_location(&text->base, 0, 400);
-        djui_text_set_alignment(text, DJUI_HALIGN_CENTER, DJUI_VALIGN_CENTER);
-        djui_text_set_font(text, gDjuiFonts[0]);
-        djui_text_set_font_scale(text, gDjuiFonts[0]->defaultFontScale * 2);
-
-        load->loadingText = text;
-    }
-
-    {
         // Current loading stage text
         struct DjuiText *text = djui_text_create(base, "");
+        djui_base_set_location_type(&text->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
+        djui_base_set_location(&text->base, 0, 0);
+        nextY += gDjuiFonts[0]->defaultFontScale * 3.0f;
+
         djui_base_set_size_type(&text->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
-        djui_base_set_size(&text->base, 1.0f, 32 * 4);
+        djui_base_set_size(&text->base, 1.0f, gDjuiFonts[0]->defaultFontScale * 3.0f);
         djui_base_set_color(&text->base, 200, 200, 200, 255);
         djui_text_set_alignment(text, DJUI_HALIGN_CENTER, DJUI_VALIGN_TOP);
         djui_text_set_font(text, gDjuiFonts[0]);
-        djui_text_set_font_scale(text, gDjuiFonts[0]->defaultFontScale * 2);
+        djui_text_set_font_scale(text, gDjuiFonts[0]->defaultFontScale * 1);
 
         load->loadingDesc = text;
     }
@@ -164,6 +157,8 @@ void render_loading_screen() {
     {
         // Loading bar
         struct DjuiProgressBar *progressBar = djui_progress_bar_create(base, &gCurrLoadingSegment.percentage, 0.0f, 1.0f, false);
+        djui_base_set_location_type(&progressBar->base, DJUI_SVT_ABSOLUTE, DJUI_SVT_ABSOLUTE);
+        djui_base_set_location(&progressBar->base, 0, 0);
         djui_base_set_visible(&progressBar->base, false);
         progressBar->base.width.value = 0.5;
 

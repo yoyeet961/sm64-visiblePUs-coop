@@ -1,4 +1,4 @@
--- name: iZeSaveStates v2.1.4
+-- name: iZeSaveStates v2.1.5
 -- description: Adds SaveStates to SM64EX-COOP!\n\n-Save up to 4 states at the same time by using the 4 D-Pad buttons\n-To load states, hold down L and press the corresponding D-Pad button\n-Each player gets their own 4 local savestate slots (Global SaveStates maybe in the future)\n\n-Use /autoload or /al to toggle AutoLoading the latest savestate upon death\n-Use /autoheal or /ah to toggle AutoHealing after loading savestates\n-Use /savestates, /savestate, or /ss to get infos about your local settings and slots
 
 local autoload_enabled = false

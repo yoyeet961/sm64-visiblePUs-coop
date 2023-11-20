@@ -9026,7 +9026,10 @@ HOOK_ON_DIALOG = 33
 HOOK_ON_HUD_RENDER_BEHIND = 34
 
 --- @type LuaHookedEventType
-HOOK_MAX = 35
+HOOK_MIRROR_MARIO_RENDER = 35
+
+--- @type LuaHookedEventType
+HOOK_MAX = 36
 
 --- @class HudDisplayFlags
 

@@ -46,6 +46,7 @@ enum LuaHookedEventType {
     HOOK_ON_OBJECT_ANIM_UPDATE,
     HOOK_ON_DIALOG,
     HOOK_ON_HUD_RENDER_BEHIND,
+    HOOK_MIRROR_MARIO_RENDER,
     HOOK_MAX,
 };
 
@@ -85,6 +86,7 @@ static const char* LuaHookedEventTypeName[] = {
     "HOOK_ON_OBJECT_ANIM_UPDATE",
     "HOOK_ON_DIALOG",
     "HOOK_ON_HUD_RENDER_BEHIND",
+    "HOOK_MIRROR_MARIO_RENDER",
     "HOOK_MAX"
 };
 
@@ -129,6 +131,7 @@ void smlua_call_event_hooks_mario_action_params_ret_int(enum LuaHookedEventType 
 void smlua_call_event_hooks_mario_param_and_int_ret_bool(enum LuaHookedEventType hookType, struct MarioState* m, s32 param, bool* returnValue);
 bool smlua_call_event_hooks_mario_param_and_int_ret_int(enum LuaHookedEventType hookType, struct MarioState* m, s32 param, s32* returnValue);
 bool smlua_call_event_hooks_mario_param_and_int_and_int_ret_int(enum LuaHookedEventType hookType, struct MarioState* m, s32 param, u32 args, s32* returnValue);
+void smlua_call_event_hooks_graph_node_object_and_int_param(enum LuaHookedEventType hookType, struct GraphNodeObject* node, s32 param);
 
 enum BehaviorId smlua_get_original_behavior_id(const BehaviorScript* behavior);
 const BehaviorScript* smlua_override_behavior(const BehaviorScript* behavior);

@@ -36,7 +36,6 @@
     - [enum MarioEyesGSCId](#enum-MarioEyesGSCId)
     - [enum MarioGrabPosGSCId](#enum-MarioGrabPosGSCId)
     - [enum MarioHandGSCId](#enum-MarioHandGSCId)
-- [mod_storage.cpp.h](#mod_storagecpph)
 - [network.h](#networkh)
     - [enum NetworkSystemType](#enum-NetworkSystemType)
     - [enum PlayerInteractions](#enum-PlayerInteractions)
@@ -1918,14 +1917,6 @@
 | MARIO_HAND_HOLDING_CAP | 3 |
 | MARIO_HAND_HOLDING_WING_CAP | 4 |
 | MARIO_HAND_RIGHT_OPEN | 5 |
-
-[:arrow_up_small:](#)
-
-<br />
-
-## [mod_storage.cpp.h](#mod_storage.cpp.h)
-- MAX_KEYS
-- MAX_KEY_VALUE_LENGTH
 
 [:arrow_up_small:](#)
 

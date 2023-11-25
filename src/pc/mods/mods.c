@@ -4,6 +4,7 @@
 #include "mod_cache.h"
 #include "data/dynos.c.h"
 #include "pc/debuglog.h"
+#include "pc/loading.h"
 
 #define MAX_SESSION_CHARS 7
 
@@ -146,7 +147,18 @@ static void mods_sort(struct Mods* mods) {
     }
 }
 
-static void mods_load(struct Mods* mods, char* modsBasePath) {
+static u32 mods_count_directory(char* modsBasePath) {
+    struct dirent* dir = NULL;
+    DIR* d = opendir(modsBasePath);
+    u32 pathCount = 0;
+    while ((dir = readdir(d)) != NULL) pathCount++;
+    closedir(d);
+    return pathCount;
+}
+
+static void mods_load(struct Mods* mods, char* modsBasePath, bool isUserModPath) {
+    if (gIsThreaded) { REFRESH_MUTEX(snprintf(gCurrLoadingSegment.str, 256, "Generating DynOS Packs in %s mod path:\n\\#808080\\%s", isUserModPath ? "user" : "local", modsBasePath)); }
+
     // generate bins
     dynos_generate_packs(modsBasePath);
 
@@ -173,21 +185,29 @@ static void mods_load(struct Mods* mods, char* modsBasePath) {
         LOG_ERROR("Could not open directory '%s'", modsBasePath);
         return;
     }
+    f32 count = (f32) mods_count_directory(modsBasePath);
+
+    if (gIsThreaded) { REFRESH_MUTEX(snprintf(gCurrLoadingSegment.str, 256, "Loading mods in %s mod path:\n\\#808080\\%s", isUserModPath ? "user" : "local", modsBasePath)); }
 
     // iterate
     char path[SYS_MAX_PATH] = { 0 };
-    while ((dir = readdir(d)) != NULL) {
+    for (u32 i = 0; (dir = readdir(d)) != NULL; ++i) {
+
         // sanity check / fill path[]
         if (!directory_sanity_check(dir, modsBasePath, path)) { continue; }
+
+        if (gIsThreaded) { REFRESH_MUTEX(snprintf(gCurrLoadingSegment.str, 256, "Loading mod:\n\\#808080\\%s/%s", modsBasePath, dir->d_name)); }
 
         // load the mod
         if (!mod_load(mods, modsBasePath, dir->d_name)) {
             break;
         }
+
+        if (gIsThreaded) { REFRESH_MUTEX(gCurrLoadingSegment.percentage = (f32) i / count); }
     }
 
     closedir(d);
-
+    if (gIsThreaded) { REFRESH_MUTEX(gCurrLoadingSegment.percentage = 1); }
 }
 
 void mods_refresh_local(void) {
@@ -207,13 +227,13 @@ void mods_refresh_local(void) {
     mods_clear(&gLocalMods);
 
     // load mods
-    if (hasUserPath) { mods_load(&gLocalMods, userModPath); }
+    if (hasUserPath) { mods_load(&gLocalMods, userModPath, true); }
 
     const char* exePath = path_to_executable();
     char defaultModsPath[SYS_MAX_PATH] = { 0 };
     path_get_folder((char*)exePath, defaultModsPath);
     strncat(defaultModsPath, MOD_DIRECTORY, SYS_MAX_PATH-1);
-    mods_load(&gLocalMods, defaultModsPath);
+    mods_load(&gLocalMods, defaultModsPath, false);
 
     // sort
     mods_sort(&gLocalMods);
@@ -241,6 +261,8 @@ void mods_enable(char* relativePath) {
 }
 
 void mods_init(void) {
+    if (gIsThreaded) { REFRESH_MUTEX(snprintf(gCurrLoadingSegment.str, 256, "Caching mods")); }
+
     // load mod cache
     mod_cache_load();
     mods_refresh_local();

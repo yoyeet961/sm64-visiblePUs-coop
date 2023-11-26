@@ -116,12 +116,20 @@ bool mod_storage_save(const char *key, const char *value) {
         }
     }
 
+    char lowerKey[MAX_KEY_VALUE_LENGTH];
+    snprintf(lowerKey, MAX_KEY_VALUE_LENGTH, "%s", key);
+    for (int i = 0; i < MAX_KEY_VALUE_LENGTH; i++) {
+        if (lowerKey[i] == '\0') { break; }
+        lowerKey[i] = tolower(lowerKey[i]);
+    }
+
+    ConfigRemoveKey(cfg, "storage", lowerKey);
     ConfigRemoveKey(cfg, "storage", key);
     ConfigAddString(cfg, "storage", key, value);
 
-    ConfigPrint(cfg, file);
-    ConfigFree(cfg);
     fclose(file);
+    ConfigPrintToFile(cfg, filename);
+    ConfigFree(cfg);
     free(filename);
 
     return true;

@@ -47,12 +47,12 @@ bool char_valid(char* buffer) {
     return true;
 }
 
-u32 key_count(char* filename) {
+s32 key_count(char* filename) {
     FILE *file;
     file = fopen(filename, "r");
     if (file == NULL) { return 0; }
 
-    u32 lines = 1;
+    s32 lines = 1;
     char c;
     do {
         c = fgetc(file);

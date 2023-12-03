@@ -1,9 +1,7 @@
 # sm64-visiblePUs-coop
 A fork of sm64ex-coop, trying to make PUs visible.
-Currently has a lot of glitches, but I will try to fix them.
-Update: Not much glitches left anymore!
+
 Version: stable 13.1 (sm64ex-coop version: beta 35)
-Latest dev version: stable 13.1 (sm64ex-coop version: beta 35)
 
 Hold L, Z and press A to toggle the PU display.
 Current problems: The sounds in PUs are heard from the right depending on your camera angle

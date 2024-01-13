@@ -656,7 +656,7 @@ Gfx* geo_switch_mario_hand_grab_pos(s32 callContext, struct GraphNode* b, Mat4* 
         // ! The HOLP is set here, which is why it only updates when the held object is drawn.
         // This is why it won't update during a pause buffered hitstun or when the camera is very far
         // away.
-        if ((marioState->pos[0] >= 32768) || (marioState->pos[1] >= 32768) || (marioState->pos[2] <= -32768) || (marioState->pos[0] <= -32768) || (marioState->pos[1] <= -32768) || (marioState->pos[2] <= -32768)) {
+        if ((marioState->pos[0] >= 32768) || (marioState->pos[1] >= 32768) || (marioState->pos[2] >= 32768) || (marioState->pos[0] <= -32768) || (marioState->pos[1] <= -32768) || (marioState->pos[2] <= -32768)) {
             get_pos_from_transform_mtx(marioState->marioBodyState->heldObjLastPosition, *curTransform,
                 (f32(*)[4])gCurGraphNodeCamera->matrixPtr);
             // marioState->marioBodyState->heldObjLastPosition[0] = marioState->pos[0];
